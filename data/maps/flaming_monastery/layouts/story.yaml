@@ -1,0 +1,28 @@
+# The moves of a real win on Flaming Monastery Act 1 Normal (9 Nov 2026): all 15 waves, no
+# health lost, enemies never above about 27, Auto-Upgrade off. In the order played, each once
+# the Yen covers it. Spots are in reference.png's pixels.
+steps:
+  - {place: 6, at: [890, 560]}   # Stone Alchemists out of the way, on Auto Upgrade (10 Nov)
+  - {place: 6, at: [940, 610]}
+  - {place: 6, at: [990, 610]}
+  - {place: 1, at: [790, 360]}   # Atom, inside the loop: covers three stretches of path
+  - {place: 2, at: [790, 460]}   # 8th Sword, limit 1, where the path enters
+  - {upgrade: [790, 360], cost: 2850}
+  - {place: 1, at: [690, 410]}
+  - {place: 4, at: [690, 360]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [890, 560]}               # farms on Auto Upgrade once the defence stands
+  - {auto: [940, 610]}
+  - {auto: [990, 610]}
+  - {upgrade: [790, 360], cost: 4150}
+  - {upgrade: [690, 410], cost: 2850}
+  - {place: 1, at: [740, 260]}   # third and last Atom, covers the path going up
+  - {upgrade: [740, 260], cost: 2850}
+  - {place: 3, at: [690, 260]}   # First Blade
+  - {upgrade: [790, 360], cost: 4950}
+  - {upgrade: [690, 410], cost: 4150}
+  - {upgrade: [740, 260], cost: 4150}
+  - {upgrade: [690, 410], cost: 4950}
+  - {upgrade: [740, 260], cost: 4950}
+  - {upgrade: [790, 360], cost: 5850}
+  - {upgrade: [690, 410], cost: 5850}
+  - {upgrade: [740, 260], cost: 5850}

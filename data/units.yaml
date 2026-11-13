@@ -1,0 +1,122 @@
+# What the setup needs to know about a unit to judge a team: its role, its archetype, the
+# placement limit the game shows, and anything a plan should know. From the wiki's unit pages
+# (wiki.animeexpeditions.com/<Unit>, read 10 Nov 2026). Roles: dps, support, farm.
+# auto_priority: the game's Auto Upgrade order in the Config's auto mode (1 upgrades first).
+# A unit missing here is judged from its card and marked "check" in the setup.
+units:
+  Atom (Totality):
+    auto_priority: 1
+    role: dps
+    archetype: Magical
+    limit: 3
+    note: "UPG 7 unlocks Complete Nuclear: every enemy on the map, ignores shields and mechanics."
+  Atom:
+    role: dps
+    archetype: Magical
+    limit: 3
+  8th Sword (Berserk):
+    auto_priority: 6
+    role: dps
+    archetype: Physical
+    limit: 1
+    note: "Unbound: one placement. Strong late upgrades (UPG 9-10)."
+  First Blade (Strongest):
+    auto_priority: 4
+    role: dps
+    archetype: Physical
+    limit: 3
+    note: "In the team from 11 Nov 2026 (Forsaken: crit +35%/+35%). Opens at 1,150 damage for 1,800 Yen, 6,450 at max (71.6k in all). 4-hit attacks strip shields; with 8th Sword in range +10% damage. Takes an Unbound book well: high base damage."
+  First Blade:
+    role: dps
+    archetype: Physical
+    limit: 3
+  Forbidden Teacher:
+    auto_priority: 5
+    role: support
+    archetype: Magical
+    limit: 4
+    note: "Buffs Magical units in its range (+5% per upgrade). Weak damage: a buffer, not DPS."
+  Ramen Guy:
+    auto_priority: 3
+    role: farm
+    archetype: Physical
+    limit: 1
+    note: "Yen every wave; +50% Yen from kills. Optional."
+  Stone Alchemist:
+    auto_priority: 2
+    role: farm
+    archetype: Physical
+    limit: 3
+    note: "Yen every wave (688, 4,375 at max). Cheap, easy to get, used by almost everyone."
+  # The bench (10 Nov 2026, from tools/scan_units.py and the wiki's UnitData module). Not in the
+  # team yet; here so the setup can judge them. An Unbound trait makes any unit single-placement.
+  Shadow (Divine):
+    role: dps
+    archetype: Magical
+    limit: 2
+    note: "Builds up over a match: spirits at UPG 4 and 6, Bunny Swarm at 7, Shadow Realm ability at 9. Wiki: top crowd control, strong DPS in long-wave modes, weak early. Unbound here."
+  Toy Maker:
+    role: support
+    archetype: Psychic
+    limit: 1
+    note: "Doesn't attack: summons Toys on every path in range, with its damage as their health (stalls enemies; UPG 4 toys explode). Good where gates open extra paths. Unbound here."
+  Bioinsect (Final Form):
+    role: support
+    archetype: Magical
+    limit: 3
+    note: "Copies 50% of the strongest unit in range; Biogel slows 60% and stuns. Spawns Mecha 17/18 bosses (10k/20k HP) after 50 takedowns to evolve its form. Wiki: utility and crowd control. Unbound here."
+  Carrot (Unleashed):
+    role: dps
+    archetype: Physical
+    limit: 3
+    note: "Crits and debuffs build Fighting Spirit; at 30 it transforms: staggers everything in range, immune to status effects. Unbound here."
+  Dark Mage (Sovereign):
+    role: dps
+    archetype: Magical
+    limit: 2
+    note: "Cycles Ice (freeze, shatter) and Lightning (an arc on the path, 25% damage a second). Unbound here."
+  Crow (Black Fire):
+    role: dps
+    archetype: Magical
+    limit: 3
+    note: "Secret, long range (29). Forsaken here (crit +35%/+35%)."
+  Sovereign (Djinn):
+    auto_priority: 3
+    role: dps
+    archetype: Physical
+    limit: 3
+    note: "In the team from 11 Nov 2026. Draconic: +20% damage, everything 15% cheaper (places for 808 Yen). 584 damage at SPA 4.7 to 3,072 at SPA 4.0 (UPG 10, 43k before the discount); each hit adds 5 chains of 25% (crowds); with a boss in range +50% damage, freezes and targets it. The best early damage per Yen on the bench. Lvl 35 (11 Nov), so a little under the wiki's numbers."
+  Wolf:
+    role: dps
+    archetype: Magical
+    limit: 1
+    note: "Evolves to Wolf (Revived), a top DPS (infinite-range 5th hit, Soul Wolves), with Wolven Blades: 400 Demonic Rift Coins in the Demonic Rift Shop. Unbound here (10 Nov 2026), so one placement. Out of the team from 11 Nov 2026 (user), though its panel reads 10.6k damage / 1.4 s, the strongest unit owned."
+  Elf Mage (Unleashed):
+    role: dps
+    archetype: Magical
+    limit: 3
+    note: "Primordial here (+35% damage, -15% SPA, +20% range)."
+  Black Heart:
+    role: support
+    archetype: Magical
+    limit: 3
+    note: "Ignores modifier elemental resistance; stops regeneration; knockback 6. Evolves to Black Heart (Revived), a top-5 unit. Forsaken here."
+  Black Heart (Revived):
+    role: dps
+    archetype: Magical
+    limit: 3
+    note: "Gale. Wiki tier list: Top 5, and in the DPS, Support and Crowd-control lists; best with Unbound. In the team from 12 Nov 2026 (user), in Sovereign's slot 4. Hotbar price 700."
+  Cursed Student (True Love):
+    role: dps
+    archetype: Physical
+    limit: 3
+    note: "Bleed stacks summon Bat Spirits. Bolt here."
+  Traitor:
+    role: dps
+    archetype: Psychic
+    limit: 3
+    note: "Aizen. Opens hard (1,173 damage for 3,000 Yen) but tops out early (1,542 at UPG 5, 17.9k): weak late. Unsellable early. No trait here. Out of the team 11 Nov 2026."
+# What a good team looks like (user, 10 Nov 2026).
+shapes:
+  regular: {dps: 2, support: 2, farm: 2}   # Story, Challenges and most modes
+  hard: {dps: 3, support: 2, farm: 1}      # harder modes

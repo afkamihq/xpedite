@@ -1,0 +1,25 @@
+# First plan for Fairy King Forest (10 Nov 2026), from the spot scan at yaw +36, zoom 0.
+# Enemies come in over the bridge on the right, wind through both loops and end at the
+# bottom of the left arm. Spots are in reference.png's pixels; each move once, when the Yen
+# covers it. To be proven by a real win on Act 2 Hard (the Daily Challenge's stage).
+steps:
+  - {place: 6, at: [540, 510]}   # Stone Alchemist, by the base, out of the way
+  - {place: 1, at: [740, 260]}   # Atom inside the upper loop: the top stretch, the left arm, the diagonal
+  - {place: 2, at: [640, 410]}   # 8th Sword, limit 1, beside the last stretch before the base
+  - {upgrade: [740, 260], cost: 2850}
+  - {place: 1, at: [790, 360]}   # between the arms: both diagonals and the left arm
+  - {upgrade: [740, 260], cost: 4150}
+  - {upgrade: [790, 360], cost: 2850}
+  - {place: 1, at: [940, 260]}   # third and last Atom, at the entry: first stretch and corner
+  - {upgrade: [940, 260], cost: 2850}
+  - {place: 3, at: [690, 460]}   # First Blade at the base
+  - {upgrade: [740, 260], cost: 4950}
+  - {upgrade: [790, 360], cost: 4150}
+  - {upgrade: [940, 260], cost: 4150}
+  - {place: 5, at: [740, 460]}   # Forbidden Teacher, base
+  - {place: 4, at: [640, 460]}   # Ramen Guy, base
+  - {upgrade: [790, 360], cost: 4950}
+  - {upgrade: [940, 260], cost: 4950}
+  - {upgrade: [740, 260], cost: 5850}
+  - {upgrade: [790, 360], cost: 5850}
+  - {upgrade: [940, 260], cost: 5850}

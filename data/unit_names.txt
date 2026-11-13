@@ -1,0 +1,123 @@
+# Every unit name, from the wiki module UnitData/data (10 Nov 2026). Used to clean OCR.
+5th God Hand
+8th Sword
+8th Sword (Berserk)
+Alchemy Brothers (Truth)
+Atom
+Atom (Totality)
+Bioinsect
+Bioinsect (Final Form)
+Black Heart
+Black Heart (Revived)
+Bounty Hunter
+Broken Falcon
+Carrot
+Carrot (Unleashed)
+Corps Captain
+Crimson (Brother)
+Crimson Captain
+Crimson Captain (Moon)
+Crow
+Crow (Black Fire)
+Cube
+Cubert
+Curly Brow
+Cursed Immortal
+Cursed Immortal (Black Sun)
+Cursed Student
+Cursed Student (True Love)
+Dark Mage
+Dark Mage (Sovereign)
+Dead Melody
+Dead Melody (Solo)
+Demon Cyborg
+Devil
+Devil (Hero)
+Eclipse Hunter
+Eclipse Hunter (Savior)
+Elf Mage
+Elf Mage (Unleashed)
+Emerald Fist
+Fallen Angel
+Fallen Angel (Holy)
+First Blade
+First Blade (Strongest)
+Flame Emperor
+Flame Emperor (Reincarnate)
+Forbidden Teacher
+Greed
+Head Captain
+Head Captain (Char)
+Hollow
+Hollow (Blaze)
+Ice Mage
+Ice Queen
+Ignition Commander
+Ignition Commander (Betrayal)
+Impaler
+Impaler (Ultimate)
+Iron Wolf
+Iron Wolf (Struggler)
+Jester
+Kid Assassin
+Kitsune
+Lady Giant
+Lady Giant (Envy)
+Lightning God
+Lightning God (Overcharged)
+Little Carrot
+Metallic Alchemist
+Nen Hunter
+Noble Captain
+Noble Captain (Vibrant)
+Princess
+Princess (Misery)
+Prodigy
+Prodigy (Rage)
+Puppet (Telekinetic)
+Rainman
+Rainman (Forecast)
+Ramen Guy
+Razorjaw
+Razorjaw (Hunter)
+Reaper
+Reaper (Frenzied)
+Reaper (Released)
+Reishi Archer
+Rubber Boy
+Salmon Sorcerer
+Salmon Sorcerer (Grade 1)
+Sand
+Sand (Alligator)
+Scissor
+Shadow (Divine)
+Sharkfang
+Sharkfang (Abyssal)
+Silver Falcon
+Sovereign
+Sovereign (Djinn)
+Stone Alchemist
+String Demon
+String Demon (Awakened)
+Subject 8
+Subject 8 (Monster)
+Suited Alchemist
+The Drink
+The Drink (Juicebox)
+The Hero
+Thunder Shinobi
+Toy Maker
+Traitor
+Traitor (Illusion)
+True Saint
+True Saint (Holy)
+Vegetable
+Vegetable (Prince)
+Water Mage
+Water Mage (Scholar)
+Water Princess
+Water Sage (Founder)
+Wild Card
+Wild Card (Ace)
+Wolf
+Wolf (Revived)

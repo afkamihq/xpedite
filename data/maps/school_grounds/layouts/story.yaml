@@ -1,0 +1,43 @@
+# School Grounds, economy first and shield-proof (10 Nov 2026). Built for the Regular
+# Challenge on Act 1 Hard (Shielded: 2 shields each, Speedy +43%, Sprinter, Tank), and meant
+# to win Normal and Hard as well. The old Normal plan is normal_v1.yaml.
+# - The path is one short S down the middle, so enemies cross it fast. Shields absorb whole
+#   attacks, so many-hit units strip them where the S doubles back: Forbidden Teacher
+#   (4 hits, 800, limit 4) and First Blade (4 hits). Teachers also buff Magical units in
+#   range, and Atom is Magical, so they sit beside the Atoms.
+# - Stone Alchemists far away at the bottom left, on the game's own Auto Upgrade.
+# - Atom #1 goes to UPG 7: Complete Nuclear hits every enemy on the map and ignores shields.
+# Spots are in reference.png's pixels (yaw +28, zoom in 2), from the spot scan or proven.
+steps:
+  - {place: 6, at: [240, 610]}   # Stone Alchemist 1
+  - {place: 5, at: [790, 410]}               # Teacher where the S bends back: strips shields
+  - {place: 4, at: [590, 310]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {place: 1, at: [700, 330]}               # Atom #1, in the S (proven spot)
+  - {place: 6, at: [290, 610]}
+  - {place: 5, at: [640, 360]}               # Teacher at the S's other bend
+  - {place: 6, at: [190, 610]}
+  - {place: 3, at: [780, 255]}               # First Blade: 4 hits an attack (proven spot)
+  - {upgrade: [700, 330], cost: 2850}
+  - {place: 1, at: [800, 300]}               # Atom #2 (proven spot)
+  - {place: 4, at: [840, 260]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [240, 610]}               # farms on Auto Upgrade once the defence stands
+  - {auto: [290, 610]}
+  - {auto: [190, 610]}
+  - {place: 5, at: [740, 460]}               # Teacher by the last stretch
+  - {upgrade: [700, 330], cost: 4150}
+  - {place: 1, at: [700, 420]}               # Atom #3 (proven spot)
+  - {place: 5, at: [790, 260]}               # fourth Teacher, by First Blade and Atom #2
+  - {upgrade: [700, 330], cost: 4950}
+  - {upgrade: [800, 300], cost: 2850}
+  - {upgrade: [780, 255]}
+  - {upgrade: [700, 330], cost: 5850}
+  - {upgrade: [700, 420], cost: 2850}
+  - {upgrade: [700, 330], cost: 6600}
+  - {place: 2, at: [840, 360]}               # 8th Sword beside the S
+  - {upgrade: [700, 330], cost: 8550}
+  - {upgrade: [700, 330], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [790, 410]}
+  - {upgrade: [640, 360]}
+  - {upgrade: [800, 300], cost: 4150}
+  - {upgrade: [780, 255]}
+  - {upgrade: [700, 420], cost: 4150}

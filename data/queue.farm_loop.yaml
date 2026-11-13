@@ -1,0 +1,19 @@
+- mode: challenge
+  map: Regular
+  times: 1
+  crystals_only: true
+- mode: challenge
+  map: Daily
+  times: 1
+- mode: story
+  map: Hollow Desert
+  act: 2
+  difficulty: Normal
+  plan: story
+  times: 3
+- mode: story
+  map: Hollow Desert
+  act: 3
+  difficulty: Normal
+  plan: story
+  times: 3

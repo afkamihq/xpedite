@@ -1,0 +1,70 @@
+# Soul Furnace, Infinite Hard: units spread over all three paths (user, 11 Nov 2026: "evenly
+# spreading the units in each path, where a lot of path length is within range"). Placed before
+# Start as phantoms, which the game builds in this order as the Yen comes, from three views: home
+# (the furnace), down (the bottom path) and north (up 0.8 s, right 1.0 s: the right path's
+# zig-zags and the upper-left path's loop, on open ground). Each view is data/maps/<folder>/ (route
+# from home, reference picture). Spots picked by tools/path_cover.py: the most path inside ~100 px
+# (about a unit's range at this zoom) not already covered.
+#
+# Auto Upgrade priority per unit (part of the name -> 1-6; 1 is upgraded fully first, the game's
+# Strict Auto-Upgrade Priority). 11 Nov 2026: the user's order was Alchemist and 8th Sword 1, Atom
+# 2. With it the Yen waited for the 8th Sword's next upgrade (2% of the damage at UPG 9) while the
+# Atoms (59%) sat at Upgrade 0, and 3 runs in 7 lost to the wave 13-15 Shark (~125 Candy Corn).
+# So the 8th Sword comes after the Atoms.
+# 12 Nov 2026: Black Heart (Revived) replaced Sovereign (user); it's top-tier and cheap, so it comes
+# right after the Atoms. A unit not named here falls back to its role (farm, dps, support).
+priorities:
+  alchemist: 1
+  atom: 2
+  blackheart: 3
+  8thsword: 4
+  blade: 5
+  teacher: 6
+# Order (11 Nov 2026): economy first (the three Stone Alchemists), the 8th Sword at the furnace
+# where every path ends, then an Atom on each path (much stronger than Sovereign, user), the
+# Teachers beside them, First Blades, and the Sovereigns last. Walks: home, down, north, down, north.
+views:
+  down: soul_furnace_down
+  north: soul_furnace_rightup
+steps:
+  - {view: home, place: 6, at: [590, 510]}      # Stone Alchemist
+  - {view: home, place: 6, at: [540, 610]}
+  - {view: home, place: 6, at: [590, 610]}
+  - {view: home, place: 2, at: [740, 460]}      # 8th Sword at the furnace: every path's end
+  - {view: down, place: 1, at: [740, 360]}      # Atom: bottom path's climb to the furnace
+  - {view: north, place: 1, at: [190, 410]}     # Atom: upper-left path's loop
+  - {view: north, place: 1, at: [1140, 410]}    # Atom: right path's upper zig-zag
+  - {view: north, place: 5, at: [190, 460]}     # Teacher beside the upper-left Atom
+  - {view: north, place: 5, at: [1140, 460]}    # Teacher beside the right Atom
+  - {view: down, place: 5, at: [690, 360]}      # Teacher beside the bottom Atom
+  - {view: down, place: 3, at: [990, 510]}      # First Blade: bottom path's first bend
+  - {view: down, place: 4, at: [790, 560]}      # Sovereign: bottom path's double bend
+  - {view: north, place: 3, at: [1240, 160]}    # First Blade: right path, further up
+  - {view: north, place: 3, at: [240, 360]}     # First Blade: upper-left loop
+  - {view: north, place: 4, at: [390, 560]}     # Sovereign: upper-left path's S-bend by the furnace
+  - {view: north, place: 4, at: [1040, 560]}    # Sovereign: right path's lower zig-zag
+
+# Where the Souls go once SPA Boost is maxed (user's plan, 11 Nov 2026; macro/modes/souls.py), in
+# this order: an Unbound Tome for each of OUR placed units listed here (part of the name -> how
+# many), then Random Units (100 Souls) placed one by one on extra_spots (home view) again and
+# again, an Unbound Tome for every new unit whose name starts with one of unbound_new (Wolf =
+# Starrk, Atom = Cid, Impaler = Alucard, Reaper = Ichigo), from bin_after_wave our own hotbar slots
+# (then placed extras) go into the hotbar's bin when room is needed, and the boosts only when
+# nothing else can be bought. Final Boss (500 Souls, kept once the rest is done): "ends the run
+# and earn +20% Candy Corn and 100 bonus Candy Corn" (wiki), bought when the health drops to
+# final_boss_health.
+souls:
+  unbound: {atom: 3}
+  unbound_new: [wolf, atom, impaler, reaper]
+  extra_units: true
+  extra_priority: 3
+  bin_after_wave: 20
+  boosts: [dmg, rng]
+  final_boss: false
+  final_boss_health: 2
+  final_boss_save_from: 44
+  final_boss_wave: 60
+  final_boss_enemies: 255
+  unbound_more: {blackheart: 3, blade: 3}
+  boosts_from_candy: 2000
+  boosts_from_wave: 45

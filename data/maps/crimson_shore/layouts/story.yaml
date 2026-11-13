@@ -1,0 +1,35 @@
+# The moves of a real win on Crimson Shore Act 1 Normal (9 Nov 2026): all 15 waves, no
+# health lost, Auto-Upgrade off. Spots are in reference.png's pixels, from the win's spots
+# moved to the straightened view. The later upgrades are extras: that win ended with
+# Y20,000 unused and a lot of enemies still out, so it needs the extra damage.
+steps:
+  - {place: 6, at: [596, 351]}   # Stone Alchemists outside the path, on Auto Upgrade (10 Nov)
+  - {place: 6, at: [390, 360]}
+  - {place: 6, at: [440, 360]}
+  - {place: 1, at: [746, 362]}   # Atom, inside the bend: covers the diagonal and the bottom stretch
+  - {place: 2, at: [838, 469]}   # 8th Sword, limit 1, by the bottom stretch
+  - {upgrade: [746, 362], cost: 2850}
+  - {place: 1, at: [688, 458]}
+  - {place: 4, at: [690, 410]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [596, 351]}               # farms on Auto Upgrade once the defence stands
+  - {auto: [390, 360]}
+  - {auto: [440, 360]}
+  - {upgrade: [746, 362], cost: 4150}
+  - {upgrade: [688, 458], cost: 2850}
+  - {place: 1, at: [803, 266]}   # third and last Atom
+  - {upgrade: [803, 266], cost: 2850}
+  - {place: 3, at: [888, 473]}   # First Blade
+  - {upgrade: [746, 362], cost: 4950}
+  - {upgrade: [688, 458], cost: 4150}
+  - {upgrade: [803, 266], cost: 4150}
+  - {upgrade: [688, 458], cost: 4950}
+  - {upgrade: [803, 266], cost: 4950}
+  # Extras, from here on
+  - {upgrade: [838, 469], cost: 4000}
+  - {upgrade: [746, 362], cost: 5850}
+  - {upgrade: [838, 469], cost: 5000}
+  - {upgrade: [688, 458], cost: 5850}
+  - {upgrade: [803, 266], cost: 5850}
+  - {upgrade: [838, 469], cost: 6000}
+  - {upgrade: [888, 473], cost: 4000}
+  - {upgrade: [888, 473], cost: 5000}

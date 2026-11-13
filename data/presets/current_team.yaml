@@ -1,0 +1,44 @@
+# Written by the setup from the hotbar (names from each unit's card, prices from the
+# hotbar, limits from data/units.yaml). Plans only name slots.
+# 11 Nov 2026: Black Heart -> Forbidden Teacher, Traitor -> Sovereign (Djinn) (Draconic),
+# Wolf (Starrk) -> First Blade (Strongest) (Forsaken). The team before is
+# current_team.before_sovereign.yaml.
+# 11 Nov 2026 (user): slots 4 and 5 swapped (Sovereign 4, Teacher 5: support and money last);
+# every plan's place: 4/5 swapped with it (old ones in cap/plans_before_slot_swap/).
+# 12 Nov 2026 (user): Sovereign (Djinn) -> Black Heart (Revived) in slot 4 (the team before is
+# current_team.before_wolf_blackheart.yaml).
+slots:
+  1:
+    unit: Atom (Totality)
+    cost: 1250
+    limit: 3
+    trait: Primordial
+    upgrades:
+    - 2850
+    - 4150
+    - 4950
+    - 5850
+  2:
+    unit: 8th Sword (Berserk)
+    cost: 1600
+    limit: 1
+    trait: Unbound
+  3:
+    unit: First Blade (Strongest)
+    cost: 1800
+    limit: 3
+    trait: Forsaken
+  4:
+    unit: Black Heart (Revived)
+    cost: 700
+    limit: 3
+  5:
+    unit: Forbidden Teacher
+    cost: 800
+    limit: 4
+  6:
+    unit: Stone Alchemist
+    cost: 550
+    limit: 3
+    farm: true
+    trait: Investor

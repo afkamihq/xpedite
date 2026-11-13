@@ -1,0 +1,9 @@
+route:
+- - w
+  - 1.5
+walk_px_per_s: 191.0
+yaw_counts: 0
+zoom_in_notches: 0
+game_size:
+- 1440
+- 810

@@ -1,0 +1,6 @@
+# Slots and spots marked on reference.png, in its pixels. A slot, not a unit's name, so
+# this works with any team. Order is the order they're placed.
+steps:
+  - {slot: 6, at: [625, 430]}
+  - {slot: 5, at: [795, 395]}
+  - {slot: 4, at: [640, 545]}

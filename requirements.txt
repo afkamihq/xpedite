@@ -1,0 +1,17 @@
+# Shared by both platforms
+opencv-python-headless
+numpy
+rapidocr-onnxruntime
+pyyaml
+Pillow
+
+# Linux backend only (Wayland capture/input)
+pywayland; sys_platform == "linux"
+
+# Windows backend only (pick what the platform layer ends up using)
+dxcam; sys_platform == "win32"
+psutil; sys_platform == "win32"
+comtypes; sys_platform == "win32"
+
+# The macro window
+PyQt6

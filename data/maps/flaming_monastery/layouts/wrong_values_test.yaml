@@ -1,0 +1,24 @@
+# A deliberately bad plan, to prove wrong values still run. Atom's limit is 3 and its max is 8.
+units:
+  - slot: 1
+    priority: abc            # not a number
+    count: 9                 # more than the game allows, and more than are marked
+    upgrade_to: 99           # more than the game's max
+    targeting: Strongest
+    from_wave: -4            # no such wave
+    spots: [[790, 360], [690, 410], [740, 260], [890, 410], [640, 410], [1803, 552], [5000, 5], x, [null, 3], [1300, 500]]
+  - slot: 2
+    upgrade_to: nine         # not a number
+    targeting: banana        # not a real option
+    spots: [[855, 400]]      # on the path, which the game refuses
+  - slot: 6
+    priority: 1
+    upgrade_to: 2            # a real, lower limit
+    spots: [[890, 560]]
+  - slot: seven              # no such slot
+    spots: [[1, 1]]
+  - junk
+steps:
+  - {do: dance}
+  - {do: place, slot: 4, spot: 0}   # a unit that isn't in the plan
+  - 7

@@ -1,0 +1,25 @@
+# Soul Furnace, Infinite Hard (Halloween event), 11 Nov 2026. Placed BEFORE Start Game as
+# phantom units, in this order: the game builds each one itself as the Yen comes, so nothing
+# here needs the camera after Start (which moves the character and the zoom). Yaw 0; the
+# furnace (the cage all three paths end in) is at about (840, 410). Every valid spot is on the
+# red ground round it, so everything here reaches the ends of all three paths: upper left,
+# right and bottom. Stage effects: Momentum, Regen I, Reinforced (-30% damage), Summoner.
+# Spots from the spot scan of this exact view (cap/scan/soul_furnace.jpg). Economy first.
+steps:
+  - {place: 6, at: [590, 510]}               # Stone Alchemist
+  - {place: 4, at: [790, 510]}               # Sovereign (Djinn), 808: chains, by the bottom path's end
+  - {place: 6, at: [590, 610]}
+  - {place: 1, at: [740, 310]}               # Atom #1 over the upper-left path's end
+  - {place: 6, at: [540, 610]}
+  - {place: 5, at: [690, 310]}               # Teacher beside it (Magical buff)
+  - {place: 4, at: [790, 460]}               # Sovereign #2 at the cage's edge (the right side is under trees)
+  - {place: 1, at: [640, 360]}               # Atom #2 left, over the upper-left path
+  - {place: 5, at: [690, 360]}               # Teacher beside it
+  - {place: 3, at: [740, 560]}               # First Blade by the bottom path
+  - {place: 4, at: [690, 460]}               # Sovereign #3
+  - {place: 2, at: [840, 310]}               # 8th Sword above the cage
+  - {place: 1, at: [840, 560]}               # Atom #3 below the cage
+  - {place: 5, at: [890, 560]}               # Teacher beside it
+  - {place: 3, at: [890, 510]}               # First Blade #2
+  - {place: 3, at: [640, 410]}               # First Blade #3
+  - {place: 5, at: [640, 460]}               # Teacher #4 (not by the Forge button)

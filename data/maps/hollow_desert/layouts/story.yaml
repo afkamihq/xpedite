@@ -1,0 +1,34 @@
+# Hollow Desert, economy first (10 Nov 2026), first plan, made inside the Regular Challenge on
+# Act 3 Hard (Upgrade Cap: 31 upgrades in all). View yaw -410, zoom 0, set by eye against a
+# grid: the snowy ground fools the path-angle measure. Enemies come down the right side, run
+# left along two level stretches, loop around the central pillar and end at the base on the
+# left. Spots are from the spot scan, in reference.png's pixels.
+steps:
+  - {place: 6, at: [440, 460]}   # Stone Alchemists, far left by the base
+  - {place: 6, at: [490, 460]}
+  - {place: 6, at: [440, 510]}
+  - {place: 1, at: [840, 510]}               # Atom #1 inside the U-bend: both level stretches
+  - {place: 5, at: [890, 560]}               # Teacher beside Atom #1
+  - {place: 4, at: [840, 610]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {place: 1, at: [690, 410]}               # Atom #2 over the loop around the pillar
+  - {place: 4, at: [740, 360]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [440, 460]}               # farms on Auto Upgrade once the defence stands
+  - {auto: [490, 460]}
+  - {auto: [440, 510]}
+  - {upgrade: [840, 510], cost: 2850}
+  - {place: 5, at: [640, 410]}               # Teacher beside Atom #2
+  - {place: 3, at: [590, 510]}               # First Blade on the last climb to the base
+  - {upgrade: [840, 510], cost: 4150}
+  - {place: 1, at: [1090, 460]}              # Atom #3 by the right-hand stretch
+  - {place: 5, at: [1040, 460]}              # Teacher beside Atom #3
+  - {upgrade: [690, 410], cost: 2850}
+  - {upgrade: [840, 510], cost: 4950}
+  - {place: 2, at: [640, 560]}               # 8th Sword at the base
+  - {upgrade: [840, 510], cost: 5850}
+  - {upgrade: [690, 410], cost: 4150}
+  - {upgrade: [840, 510], cost: 6600}
+  - {upgrade: [840, 510], cost: 8550}
+  - {upgrade: [840, 510], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [1090, 460], cost: 2850}
+  - {upgrade: [690, 410], cost: 4950}
+  - {upgrade: [590, 510]}

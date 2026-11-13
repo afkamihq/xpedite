@@ -1,0 +1,33 @@
+# East Town, first plan (10 Nov 2026). View yaw +70 (the lane's long stretch across the
+# junction level on a grid), zoom 0. The path comes down from the top, loops round by spawn
+# and leaves along the road to the left. 24 valid spots, from the spot scan.
+steps:
+  - {place: 6, at: [190, 410]}               # Stone Alchemists, far left
+  - {place: 6, at: [190, 460]}
+  - {place: 6, at: [190, 510]}
+  - {place: 1, at: [640, 360]}               # Atom #1 inside the loop by spawn
+  - {place: 5, at: [590, 410]}               # Teacher beside it
+  - {place: 4, at: [490, 410]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {upgrade: [640, 360], cost: 2850}
+  - {place: 1, at: [590, 210]}               # Atom #2 by the top stretches
+  - {place: 4, at: [590, 110]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [190, 410]}                        # farms on Auto Upgrade once the defence stands
+  - {auto: [190, 460]}
+  - {auto: [190, 510]}
+  - {place: 5, at: [540, 160]}               # Teacher beside Atom #2
+  - {upgrade: [640, 360], cost: 4150}
+  - {place: 3, at: [590, 460]}               # First Blade where the lane leaves the loop
+  - {upgrade: [590, 210], cost: 2850}
+  - {place: 1, at: [790, 260]}               # Atom #3 on the loop's right side
+  - {place: 2, at: [640, 460]}               # 8th Sword below spawn
+  - {upgrade: [640, 360], cost: 4950}
+  - {upgrade: [640, 360], cost: 5850}
+  - {upgrade: [590, 210], cost: 4150}
+  - {upgrade: [640, 360], cost: 6600}
+  - {upgrade: [640, 360], cost: 8550}
+  - {upgrade: [640, 360], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [790, 260], cost: 2850}
+  - {upgrade: [590, 210], cost: 4950}
+  - {upgrade: [590, 460]}
+  - {upgrade: [590, 410]}
+  - {upgrade: [540, 160]}

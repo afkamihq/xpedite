@@ -1,0 +1,97 @@
+# How the screens connect. Each edge: from a screen, doing something, you reach another.
+# do: a button name from data/screens.yaml (the allow-list), or scroll / key.
+# trip: true means a loading trip, so allow far longer and expect loading screens.
+# untested: true means it comes from the docs and hasn't been seen working on Windows.
+
+scrolls:
+  play_menu_down: {at: [1350, 700], amount: 150}
+  play_menu_up: {at: [1350, 700], amount: -150}
+
+edges:
+  # Lobby
+  - {from: lobby, do: play, to: play_menu_top}
+  - {from: lobby, do: settings, to: game_settings}
+  - {from: game_settings, do: close, to: lobby}
+  - {from: lobby, do: events, to: events}
+  - {from: lobby, do: quests, to: quests}
+  - {from: lobby, do: pass_season, to: battlepass}
+  - {from: lobby, do: pass_event, to: event_pass}
+  - {from: battlepass, do: close, to: lobby}
+  - {from: event_pass, do: back, to: events}
+  - {from: obtained_rewards, do: dismiss, to: any}
+
+  # Play menu
+  - {from: play_menu_top, do: back, to: lobby}
+  - {from: play_menu_top, do: story, to: story_maps}
+  - {from: play_menu_top, do: raid, to: raid_maps}
+  - {from: play_menu_top, do: boss_rush, to: boss_rush}
+  - {from: play_menu_top, do: challenge, to: challenges}
+  - {from: play_menu_top, do: expedition, to: expedition}
+  - {from: play_menu_top, do: trials, to: quests}
+  - {from: play_menu_top, scroll: play_menu_down, to: play_menu_bottom}
+  - {from: play_menu_bottom, do: back, to: lobby}
+  - {from: play_menu_bottom, scroll: play_menu_up, to: play_menu_top}
+  - {from: play_menu_bottom, do: tournament, to: tournament}
+  - {from: play_menu_bottom, do: global_tournament, to: global_tournament}
+  - {from: play_menu_bottom, do: tower, to: tower}
+  - {from: play_menu_bottom, do: sandbox, to: sandbox_picker}
+
+  # Story
+  - {from: story_maps, do: back, to: play_menu_top}
+  - {from: story_maps, do: first_island, to: story_act}
+  - {from: story_act, do: close, to: story_maps}
+  - {from: story_act, do: tab_infinite, to: story_infinite}
+  - {from: story_act, do: tab_mastery, to: story_mastery}
+  - {from: story_act, do: select_stage, to: party_room}
+  - {from: story_infinite, do: close, to: story_maps}
+  - {from: story_infinite, do: tab_1, to: story_act}
+  - {from: story_infinite, do: tab_mastery, to: story_mastery}
+  - {from: story_infinite, do: select_stage, to: party_room}
+  - {from: story_mastery, do: close, to: story_maps}
+  - {from: story_mastery, do: tab_1, to: story_act}
+  - {from: story_mastery, do: tab_infinite, to: story_infinite}
+  - {from: story_mastery, do: select_stage, to: party_room}
+
+  - {from: story_gate, do: close, to: story_maps, untested: true}
+
+  # Raid
+  - {from: raid_maps, do: back, to: play_menu_top}
+  - {from: raid_maps, do: first_island, to: raid_act_picker}
+  - {from: raid_act_picker, do: close, to: raid_maps}
+  - {from: raid_act_picker, do: select_stage, to: party_room}
+
+  # Other modes: only the way back out, until each mode is built
+  - {from: boss_rush, do: back, to: play_menu_top}
+  - {from: expedition, do: back, to: play_menu_top}
+  - {from: tower, do: back, to: play_menu_top}
+  - {from: tournament, do: close, to: play_menu_top}
+  - {from: global_tournament, do: close, to: play_menu_top}
+  - {from: challenges, do: close, to: play_menu_top}
+  - {from: challenges, do: row_1, to: challenge_detail}
+  - {from: challenge_detail, do: close, to: play_menu_top}
+  - {from: quests, do: close, to: lobby}
+
+  # Events
+  - {from: events, do: back, to: lobby}
+  - {from: events, do: open_soul_furnace, to: soul_furnace_picker}
+  - {from: soul_furnace_picker, do: close, to: events}
+  - {from: soul_furnace_picker, do: select_stage, to: party_room, untested: true}
+
+  # Sandbox and party room
+  - {from: sandbox_picker, do: close, to: play_menu_top, untested: true}
+  - {from: sandbox_picker, do: select_school_grounds, to: party_room}
+  - {from: party_room, do: leave_party, to: play_menu_top, untested: true}
+
+  # In a match
+  - {from: match, do: back_to_lobby, to: exit_confirm}
+  - {from: exit_confirm, do: return_to_lobby, to: lobby, trip: true}
+  - {from: unit_manager, do: close, to: match}
+  - {from: unit_panel, do: close, to: match}
+  - {from: autoplay_settings, do: close, to: match}
+  - {from: sandbox_controls, do: close, to: match}
+  - {from: match_party, do: back, to: match}
+  - {from: victory, do: exit, to: exit_confirm}
+  - {from: defeat, do: exit, to: exit_confirm, untested: true}
+
+  # Roblox's own menu, which closes back to whatever is under it
+  - {from: esc_menu, key: escape, to: any}

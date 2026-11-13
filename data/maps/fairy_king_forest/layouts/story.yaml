@@ -1,0 +1,41 @@
+# Fairy King Forest, economy first (10 Nov 2026, after the user's advice and the wiki):
+# - Stone Alchemist pays 688 a wave and 4,375 at its max (3 upgrades: 1,100 / 2,200 / 4,500);
+#   all three go down first, out of the way, on the game's own Auto Upgrade ("auto").
+# - Atom (Totality) is Magical; Forbidden Teacher buffs Magical units in its range, so each
+#   Atom gets a Teacher right beside it. Atom #1 is pushed to UPG 7 for Complete Nuclear,
+#   which hits every enemy on the map and ignores shields.
+# - Ramen Guy (farm, +50% kill Yen) goes on auto once the defence stands.
+# Enemies come in over the bridge on the right and wind to the bottom of the left arm.
+# Spots are in reference.png's pixels (yaw +36, zoom 0); every one is from the spot scan.
+steps:
+  - {place: 6, at: [540, 510]}   # Stone Alchemists, by the base, out of the way
+  - {place: 6, at: [590, 510]}
+  - {place: 6, at: [440, 460]}
+  - {place: 1, at: [740, 260]}               # Atom inside the upper loop: three stretches
+  - {place: 5, at: [690, 260]}               # Forbidden Teacher beside Atom #1
+  - {place: 4, at: [640, 260]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {upgrade: [740, 260], cost: 2850}
+  - {place: 1, at: [790, 360]}               # between the arms
+  - {place: 4, at: [840, 260]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [540, 510]}               # farms on Auto Upgrade once the defence stands
+  - {auto: [590, 510]}
+  - {auto: [440, 460]}
+  - {place: 5, at: [740, 410]}               # Teacher beside Atom #2
+  - {upgrade: [740, 260], cost: 4150}
+  - {place: 2, at: [640, 410]}               # 8th Sword by the last stretch
+  - {upgrade: [790, 360], cost: 2850}
+  - {upgrade: [740, 260], cost: 4950}
+  - {place: 1, at: [940, 260]}               # Atom #3 at the entry
+  - {place: 5, at: [990, 260]}               # Teacher beside Atom #3
+  - {upgrade: [740, 260], cost: 5850}
+  - {upgrade: [790, 360], cost: 4150}
+  - {upgrade: [740, 260], cost: 6600}
+  - {upgrade: [940, 260], cost: 2850}
+  - {upgrade: [740, 260], cost: 8550}
+  - {upgrade: [740, 260], cost: 9750}        # UPG 7: Complete Nuclear
+  - {place: 3, at: [690, 460]}               # First Blade at the base
+  - {upgrade: [790, 360], cost: 4950}
+  - {upgrade: [940, 260], cost: 4150}
+  - {upgrade: [690, 260]}                    # Teachers: cheap, +5% to the Atoms each
+  - {upgrade: [740, 410]}
+  - {upgrade: [990, 260]}

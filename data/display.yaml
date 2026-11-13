@@ -1,0 +1,5 @@
+# Where the game sits: [x, y, width, height] of its picture on the screen, in real pixels.
+# Remove frame to go back to plain fullscreen 1920x1080.
+# Roblox refuses to go below 797 px tall (measured), so 1440x810 is the smallest clean
+# 16:9. It's exactly 3/4 of 1920x1080.
+frame: [240, 40, 1440, 810]

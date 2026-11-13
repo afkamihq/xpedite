@@ -1,0 +1,266 @@
+# Every screen the macro can recognise, checked in this order and the first match
+# wins, so overlays come before what they cover.
+#
+# frames: pictures of this screen, win/NAME = refs/frames_win, linux/NAME = refs/frames.
+#         Anchors are found by tools/find_anchors.py and saved in data/anchors.yaml:
+#         marks stable across all of a screen's frames that appear on no later screen.
+# boxes:  hand-picked anchor spots [x0, y0, x1, y1] for screens with a single picture,
+#         where stability can't be measured. Replace with real frames once captured.
+# buttons: the ONLY things the macro may click on this screen, at 1920x1080.
+#         Anything that spends or sells never goes here (tools/test_screens.py enforces it).
+
+screens:
+  # Roblox's own UI, which doesn't scale with the game, so only native pictures work.
+  esc_menu:
+    frames: []
+  exit_confirm:
+    frames: [win/exit_confirm, win/exit_confirm_match, linux/exit_confirm]
+    # The dialog sits 12 px lower in a match than on results. y 598 is on the buttons in both.
+    buttons:
+      cancel: [1098, 598]
+      return_to_lobby: [822, 598]
+  unit_panel:
+    frames: [win/unit_panel, linux/unit_panel]
+    buttons:
+      close: [614, 344]
+  unit_manager:
+    frames: [win/unit_manager, linux/unit_manager]
+    buttons:
+      close: [1374, 1036]
+  autoplay_settings:
+    frames: [win/autoplay_settings, linux/autoplay_settings]
+    buttons:
+      close: [1600, 1026]
+  sandbox_controls:
+    frames: [win/sandbox_controls, linux/sandbox_controls]
+    buttons:
+      close: [1628, 200]
+  victory:
+    frames: [win/victory, linux/victory]
+    boxes: [[330, 180, 480, 220], [352, 816, 592, 884], [604, 816, 844, 884]]
+    buttons:
+      # close leaves the finished match showing, where `party` (on match) leads to any stage.
+      close: [1559, 200]
+      next_stage: [472, 852]
+      repeat_stage: [722, 852]
+      exit: [1150, 852]
+  defeat:
+    frames: [win/defeat, linux/defeat]
+    boxes: [[346, 180, 530, 220], [352, 816, 716, 884], [730, 816, 1094, 884]]
+    buttons:
+      close: [1559, 200]
+      repeat_stage: [534, 852]  # also a last act's Victory, which has no Next Stage and reads as this
+      exit: [1150, 852]
+  # A trip runs: crossfade, black, roblox_teleport, black, game_loading. Black frames
+  # have no anchors: classify() reports them as "black" when nothing else matches.
+  game_loading:
+    frames: [win/game_loading_entry1, win/game_loading_entry2, win/game_loading_exit, linux/game_loading]
+  # Only the steady version: as it fades or zooms this screen reads as unknown, so
+  # recovery has to allow some unknown frames during a trip. Linux lays it out differently.
+  roblox_teleport:
+    frames: [win/roblox_teleport_blurred, win/roblox_teleport_exit1, win/roblox_teleport_exit2]
+    boxes: [[820, 640, 1100, 672], [830, 558, 1155, 598]]
+  # Over everything, after claiming. Any click closes it.
+  obtained_rewards:
+    frames: [native/obtained_rewards__1]
+    boxes: [[787, 389, 1133, 427], [833, 660, 1087, 683]]
+    buttons:
+      dismiss: [960, 867]
+  # These two have paid buttons right beside Claim All (+10 Levels, Buy Premium Pass, Buy 25
+  # Levels). Only ever Claim All and the way out here: tools/test_screens.py enforces it.
+  battlepass:
+    frames: [native/battlepass__1]
+    boxes: [[393, 207, 533, 237], [587, 273, 733, 293]]
+    buttons:
+      claim_all: [1395, 840]
+      close: [1510, 220]
+  event_pass:
+    frames: [native/event_pass__1]
+    boxes: [[993, 167, 1380, 227], [1030, 245, 1340, 270]]
+    buttons:
+      claim_all: [1763, 1027]
+      back: [604, 1027]
+  # The party room reached from inside a finished match (the ship button), where the next
+  # stage starts in seconds with no trip through the lobby. Start is grey until a stage is
+  # picked with Change Map or Change Gamemode.
+  match_party:
+    frames: [win/match_party, win/match_party_ready, win/match_party_crimson, win/match_party_hd]
+    buttons:
+      start: [1139, 709]
+      change_map: [1396, 709]
+      change_gamemode: [1652, 709]
+      back: [151, 1023]
+  party_room:
+    frames: [win/party_room, win/party_room_sandbox, linux/party_room]
+    # Start's height differs between the normal and Sandbox versions of this room.
+    buttons:
+      start_normal: [1138, 752]
+      start_sandbox: [1138, 688]
+      disband_normal: [1652, 752]
+      leave_party: [1766, 1024]
+  soul_furnace_picker:
+    frames: [win/soul_furnace_picker, linux/soul_furnace_picker]
+    buttons:
+      close: [1538, 198]
+      select_stage: [642, 852]
+  story_act:
+    frames: [win/story_act_picker, win/story_act_hard, win/story_act_crimson, win/story_act_flaming,
+             win/story_act_act2hard, linux/story_act_picker, linux/story_act_hard]
+    buttons: &stage_picker
+      close: [1538, 198]
+      select_stage: [642, 852]
+      normal: [520, 440]
+      hard: [608, 440]
+      tab_1: [412, 296]
+      tab_2: [412, 388]
+      tab_3: [412, 480]
+      tab_4: [412, 572]
+      tab_5: [412, 664]
+      tab_infinite: [412, 756]
+      tab_mastery: [412, 848]
+      # Hollow Desert's picker has its "4th Gate" tab first, so its acts sit one row lower
+      # (clicked live, 10 Nov 2026). It has acts 1 to 3.
+      hd_tab_1: [411, 419]
+      hd_tab_2: [411, 512]
+      hd_tab_3: [411, 605]
+  story_infinite:
+    frames: [win/story_infinite, linux/story_infinite]
+    buttons: *stage_picker
+  story_mastery:
+    frames: [win/story_mastery, linux/story_mastery]
+    buttons: *stage_picker
+  # Hollow Desert's picker: a "4th Gate" tab first, no difficulty buttons, most acts locked.
+  # Only the way out so far. Choosing stages here waits until Story progress reaches it.
+  story_gate:
+    frames: [win/story_gate]
+    boxes: [[620, 836, 850, 868], [1170, 836, 1390, 868]]
+    buttons:
+      close: [1538, 198]
+  raid_act_picker:
+    frames: [win/raid_act_picker, linux/raid_act_picker]
+    buttons:
+      close: [1538, 198]
+      select_stage: [642, 852]
+  sandbox_picker:
+    frames: [win/sandbox, linux/sandbox]
+    buttons:
+      close: [1560, 200]
+      school_grounds: [570, 400]
+      flower_forest: [950, 400]
+      rose_kingdom: [1330, 400]
+      fairy_king_forest: [570, 573]
+      kings_tomb: [950, 573]
+      east_town: [1330, 573]
+      crimson_shore: [570, 740]
+      flaming_monastery: [950, 740]
+      select_map: [1134, 856]
+  challenge_detail:
+    frames: [win/challenge_detail, win/challenge_detail_daily, win/challenge_detail_cooldown, linux/challenge_detail]
+    buttons:
+      close: [1580, 198]
+      back: [732, 852]
+      select_stage: [1012, 852]  # never Enter Matchmaking, beside it
+  challenges:
+    frames: [win/challenges_regular, win/challenges_daily, linux/challenges_regular, linux/challenges_daily]
+    buttons:
+      close: [1580, 198]
+      tab_regular: [480, 320]
+      tab_daily: [480, 480]
+      # On each row's map picture: the reward strip scrolls on the Daily row and eats clicks.
+      row_1: [740, 400]
+      row_2: [740, 607]
+      row_3: [740, 819]
+  tournament:
+    frames: [win/tournament, linux/tournament]
+    buttons:
+      close: [1600, 190]
+  global_tournament:
+    frames: [win/global_tournament, linux/global_tournament]
+    buttons:
+      close: [1600, 190]
+  quests:
+    frames: [win/quests_daily, win/quests_trials, linux/quests_daily, linux/quests_trials]
+    buttons:
+      close: [1510, 220]
+      claim_all: [731, 840]
+  events:
+    frames: [win/events_rift, win/events_ancient_one, win/events_halloween,
+             linux/events_rift, linux/events_ancient_one, linux/events_halloween]
+    buttons:
+      back: [138, 1024]
+      rift: [220, 456]
+      ancient_one: [220, 576]
+      halloween: [220, 290]
+      event_gamemode: [1348, 984]
+  story_maps:
+    # By hand, on what stays put: this row scrolls, so automatic anchors landed on island art.
+    frames: [win/story_maps, win/story_maps_mid, linux/story_maps, linux/story_maps_end]
+    boxes: [[100, 96, 300, 144], [40, 996, 260, 1048]]
+    buttons:
+      back: [150, 1014]
+      first_island: [340, 450]
+  raid_maps:
+    frames: [win/raid_maps, linux/raid_maps]
+    buttons:
+      back: [150, 1014]
+      first_island: [340, 450]
+  boss_rush:
+    frames: [win/boss_rush, linux/boss_rush]
+    buttons:
+      back: [195, 1029]
+  expedition:
+    frames: [win/expedition, linux/expedition]
+    buttons:
+      back: [196, 1028]
+  tower:
+    frames: [win/tower, linux/tower]
+    buttons:
+      back: [188, 1028]
+  play_menu_top:
+    frames: [win/play_menu_top, win/match_gamemodes, linux/play_menu_top]  # match_gamemodes: the same menu, from the ship in a match
+    buttons:
+      back: [150, 1014]
+      story: [1100, 230]
+      raid: [1620, 230]
+      boss_rush: [1100, 470]
+      challenge: [1620, 470]
+      expedition: [1100, 700]
+      trials: [1620, 700]
+  play_menu_bottom:
+    frames: [win/play_menu_bottom, linux/play_menu_bottom]
+    buttons:
+      back: [150, 1014]
+      tournament: [1100, 200]
+      global_tournament: [1620, 200]
+      tower: [1100, 430]
+      sandbox: [1100, 790]
+  match:
+    # By hand on the Unit Manager button, cut from a native picture: it's in every match and
+    # never changes. The Quests icon was tried and failed the moment a red "!" badge appeared.
+    # Placement mode counts as this screen too: its hint box follows the pointer, so it has
+    # no fixed mark. The placement engine confirms placing by the Yen dropping.
+    boxes: [[1705, 548, 1900, 596]]
+    frames: [native/match__1, win/match_hud, win/match_hud_sandbox, win/match_hud_unit, win/overhead_view,
+             win/placement_mode]
+    buttons:
+      # In Roblox's own top bar, which keeps its pixel size. {native: ...} isn't scaled.
+      back_to_lobby: {native: [393, 42]}
+      # The ship, bottom left. Only there once the match has ended and results are closed.
+      party: [352, 1016]
+      sandbox_controls: [1803, 680]
+      autoplay_gear: [1728, 620]
+  # The game's own Settings window (the gear in the top bar), over the lobby or a match.
+  game_settings:
+    frames: [win/game_settings, win/game_settings2]
+    buttons:
+      close: [1579, 200]
+      search: [1127, 209]
+  lobby:
+    frames: [win/lobby, win/lobby2, linux/lobby]
+    buttons:
+      settings: {native: [344, 42]}  # the gear, in Roblox's own top bar
+      play: [171, 660]
+      events: [118, 752]
+      quests: [69, 583]
+      pass_season: [1860, 427]
+      pass_event: [1860, 533]

@@ -1,0 +1,13 @@
+# Soul Furnace, 11 Nov 2026: farms, one Atom and the Sovereigns as phantoms. Nothing reaches the
+# furnace before about 2:45, so the Yen till then goes into the Atom (Auto Upgrade on it alone
+# from Start) for Complete Nuclear (UPG 7, every enemy on the map). What ends a run is the Shark
+# boss (201k HP at wave ~10) reaching the furnace: Sovereigns at the furnace lock onto a boss
+# with +50% damage and freeze it.
+steps:
+  - {place: 6, at: [590, 510]}
+  - {place: 6, at: [590, 610]}
+  - {place: 6, at: [540, 610]}
+  - {place: 1, at: [790, 460]}               # Atom #1 at the cage's edge: all three paths' ends
+  - {place: 4, at: [790, 510]}               # Sovereigns round the cage, for the boss
+  - {place: 4, at: [740, 410]}
+  - {place: 4, at: [890, 510]}

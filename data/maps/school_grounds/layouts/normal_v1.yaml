@@ -1,0 +1,20 @@
+# The moves of a real win on School Grounds Act 1 Normal (9 Nov 2026): all 15 waves with no
+# health lost, Auto-Upgrade off. In the order played, each once the Yen covers it. Spots are
+# in reference.png's pixels. "upgrade" means select the unit placed at that spot and press T.
+# Every spot here was placed on successfully. The path itself is refused.
+steps:
+  - {place: 6, at: [600, 330]}   # Stone Alchemist: the farm pays for everything
+  - {place: 1, at: [700, 330]}   # Atom, in the middle: long range covers most of the path
+  - {place: 2, at: [790, 385]}   # 8th Sword, limit 1
+  - {upgrade: [700, 330], cost: 2850}
+  - {place: 1, at: [800, 300]}
+  - {upgrade: [700, 330], cost: 4150}
+  - {upgrade: [800, 300], cost: 2850}
+  - {place: 1, at: [700, 420]}   # third and last Atom
+  - {upgrade: [700, 420], cost: 2850}
+  - {place: 3, at: [780, 255]}   # First Blade
+  - {upgrade: [700, 330], cost: 4950}
+  - {upgrade: [800, 300], cost: 4150}
+  - {upgrade: [700, 420], cost: 4150}
+  - {upgrade: [800, 300], cost: 4950}
+  - {upgrade: [700, 420], cost: 4950}

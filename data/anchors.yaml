@@ -1,0 +1,952 @@
+# Made by tools/find_anchors.py. seen_at_least / elsewhere_at_most: how this mark
+# scored on its own screen's frames and on screens checked later.
+esc_menu:
+- source: native/esc_menu__1
+  box:
+  - 1184
+  - 704
+  - 1336
+  - 748
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.215
+- source: native/esc_menu__1
+  box:
+  - 288
+  - 464
+  - 380
+  - 504
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.207
+- source: native/esc_menu__1
+  box:
+  - 368
+  - 96
+  - 576
+  - 136
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.225
+exit_confirm:
+- source: native/exit_confirm__1
+  box:
+  - 608
+  - 432
+  - 700
+  - 472
+  threshold: 0.7
+  seen_at_least: 0.754
+  elsewhere_at_most: 0.315
+- source: native/exit_confirm__1
+  box:
+  - 576
+  - 336
+  - 668
+  - 376
+  threshold: 0.818
+  seen_at_least: 0.938
+  elsewhere_at_most: 0.458
+- source: native/exit_confirm__1
+  box:
+  - 720
+  - 432
+  - 928
+  - 472
+  threshold: 0.701
+  seen_at_least: 0.821
+  elsewhere_at_most: 0.39
+unit_panel:
+- source: win/unit_panel
+  box:
+  - 64
+  - 432
+  - 216
+  - 476
+  threshold: 0.877
+  seen_at_least: 0.997
+  elsewhere_at_most: 0.289
+- source: win/unit_panel
+  box:
+  - 432
+  - 208
+  - 492
+  - 268
+  threshold: 0.878
+  seen_at_least: 0.998
+  elsewhere_at_most: 0.411
+- source: win/unit_panel
+  box:
+  - 112
+  - 304
+  - 172
+  - 364
+  threshold: 0.843
+  seen_at_least: 0.963
+  elsewhere_at_most: 0.384
+unit_manager:
+- source: native/unit_manager__1
+  box:
+  - 1296
+  - 752
+  - 1388
+  - 792
+  threshold: 0.7
+  seen_at_least: 0.811
+  elsewhere_at_most: 0.356
+- source: native/unit_manager__1
+  box:
+  - 992
+  - 752
+  - 1084
+  - 792
+  threshold: 0.784
+  seen_at_least: 0.904
+  elsewhere_at_most: 0.52
+autoplay_settings:
+- source: native/autoplay_settings__1
+  box:
+  - 1344
+  - 576
+  - 1436
+  - 616
+  threshold: 0.848
+  seen_at_least: 0.968
+  elsewhere_at_most: 0.448
+- source: native/autoplay_settings__1
+  box:
+  - 912
+  - 192
+  - 972
+  - 252
+  threshold: 0.827
+  seen_at_least: 0.947
+  elsewhere_at_most: 0.582
+- source: native/autoplay_settings__1
+  box:
+  - 1280
+  - 368
+  - 1432
+  - 412
+  threshold: 0.801
+  seen_at_least: 0.921
+  elsewhere_at_most: 0.427
+sandbox_controls:
+- source: native/sandbox_controls__1
+  box:
+  - 1040
+  - 208
+  - 1248
+  - 248
+  threshold: 0.833
+  seen_at_least: 0.953
+  elsewhere_at_most: 0.327
+- source: native/sandbox_controls__1
+  box:
+  - 112
+  - 448
+  - 204
+  - 488
+  threshold: 0.798
+  seen_at_least: 0.918
+  elsewhere_at_most: 0.291
+- source: native/sandbox_controls__1
+  box:
+  - 912
+  - 256
+  - 972
+  - 316
+  threshold: 0.81
+  seen_at_least: 0.93
+  elsewhere_at_most: 0.31
+victory:
+- source: win/victory
+  box:
+  - 248
+  - 135
+  - 360
+  - 165
+  threshold: 0.7
+  seen_at_least: 0.815
+  elsewhere_at_most: 0.609
+- source: win/victory
+  box:
+  - 264
+  - 612
+  - 444
+  - 663
+  threshold: 0.7
+  seen_at_least: 0.81
+  elsewhere_at_most: 0.678
+- source: win/victory
+  box:
+  - 453
+  - 612
+  - 633
+  - 663
+  threshold: 0.7
+  seen_at_least: 0.786
+  elsewhere_at_most: 0.761
+defeat:
+- source: win/defeat
+  box:
+  - 260
+  - 135
+  - 398
+  - 165
+  threshold: 0.747
+  seen_at_least: 0.867
+  elsewhere_at_most: 0.502
+- source: win/defeat
+  box:
+  - 264
+  - 612
+  - 537
+  - 663
+  threshold: 0.7
+  seen_at_least: 0.816
+  elsewhere_at_most: 0.587
+- source: win/defeat
+  box:
+  - 548
+  - 612
+  - 820
+  - 663
+  threshold: 0.768
+  seen_at_least: 0.888
+  elsewhere_at_most: 0.554
+game_loading:
+- source: native/game_loading__1
+  box:
+  - 784
+  - 288
+  - 936
+  - 332
+  threshold: 0.739
+  seen_at_least: 0.859
+  elsewhere_at_most: 0.236
+- source: native/game_loading__1
+  box:
+  - 640
+  - 224
+  - 848
+  - 264
+  threshold: 0.705
+  seen_at_least: 0.825
+  elsewhere_at_most: 0.223
+- source: native/game_loading__1
+  box:
+  - 512
+  - 288
+  - 664
+  - 332
+  threshold: 0.759
+  seen_at_least: 0.879
+  elsewhere_at_most: 0.267
+roblox_teleport:
+- source: win/roblox_teleport_blurred
+  box:
+  - 615
+  - 480
+  - 825
+  - 504
+  threshold: 0.861
+  seen_at_least: 0.981
+  elsewhere_at_most: 0.358
+- source: win/roblox_teleport_blurred
+  box:
+  - 622
+  - 418
+  - 866
+  - 448
+  threshold: 0.878
+  seen_at_least: 0.998
+  elsewhere_at_most: 0.272
+obtained_rewards:
+- source: native/obtained_rewards__1
+  box:
+  - 590
+  - 292
+  - 850
+  - 320
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.278
+- source: native/obtained_rewards__1
+  box:
+  - 625
+  - 495
+  - 815
+  - 512
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.324
+battlepass:
+- source: native/battlepass__1
+  box:
+  - 295
+  - 155
+  - 400
+  - 178
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.455
+- source: native/battlepass__1
+  box:
+  - 440
+  - 205
+  - 550
+  - 220
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.447
+event_pass:
+- source: native/event_pass__1
+  box:
+  - 745
+  - 125
+  - 1035
+  - 170
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.28
+- source: native/event_pass__1
+  box:
+  - 772
+  - 184
+  - 1005
+  - 202
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.428
+match_party:
+- source: win/match_party
+  box:
+  - 1184
+  - 512
+  - 1336
+  - 556
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.448
+- source: win/match_party
+  box:
+  - 752
+  - 224
+  - 904
+  - 268
+  threshold: 0.734
+  seen_at_least: 0.854
+  elsewhere_at_most: 0.474
+- source: win/match_party
+  box:
+  - 624
+  - 368
+  - 832
+  - 408
+  threshold: 0.7
+  seen_at_least: 0.809
+  elsewhere_at_most: 0.557
+party_room:
+# 12 Nov 2026: the old anchors sat on the 3D lobby behind the panel, and once that view shifted
+# the room read as play_menu_bottom (every Soul Furnace start failed). Now the panel itself:
+# Leave Party, and the "Private Party" line in the old and the new layout (one may miss).
+- source: native/party_room__2
+  box:
+  - 1262
+  - 754
+  - 1392
+  - 784
+  threshold: 0.76
+  seen_at_least: 0.828
+  elsewhere_at_most: 0.672
+- source: native/party_room__2
+  box:
+  - 774
+  - 330
+  - 1060
+  - 362
+  threshold: 0.75
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.252
+- source: native/party_room__1
+  box:
+  - 774
+  - 282
+  - 1060
+  - 314
+  threshold: 0.75
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.303
+soul_furnace_picker:
+- source: native/soul_furnace_picker__1
+  box:
+  - 432
+  - 528
+  - 524
+  - 568
+  threshold: 0.772
+  seen_at_least: 0.892
+  elsewhere_at_most: 0.215
+- source: native/soul_furnace_picker__1
+  box:
+  - 288
+  - 416
+  - 440
+  - 460
+  threshold: 0.791
+  seen_at_least: 0.911
+  elsewhere_at_most: 0.27
+- source: native/soul_furnace_picker__1
+  box:
+  - 304
+  - 208
+  - 364
+  - 268
+  threshold: 0.787
+  seen_at_least: 0.907
+  elsewhere_at_most: 0.276
+story_act:
+- source: native/story_act__1
+  box:
+  - 256
+  - 128
+  - 348
+  - 168
+  threshold: 0.744
+  seen_at_least: 0.864
+  elsewhere_at_most: 0.46
+story_infinite:
+- source: native/story_infinite__1
+  box:
+  - 576
+  - 528
+  - 668
+  - 568
+  threshold: 0.785
+  seen_at_least: 0.905
+  elsewhere_at_most: 0.205
+- source: native/story_infinite__1
+  box:
+  - 320
+  - 416
+  - 528
+  - 456
+  threshold: 0.794
+  seen_at_least: 0.914
+  elsewhere_at_most: 0.287
+- source: native/story_infinite__1
+  box:
+  - 576
+  - 416
+  - 636
+  - 476
+  threshold: 0.846
+  seen_at_least: 0.966
+  elsewhere_at_most: 0.414
+story_mastery:
+- source: native/story_mastery__1
+  box:
+  - 256
+  - 208
+  - 408
+  - 252
+  threshold: 0.819
+  seen_at_least: 0.939
+  elsewhere_at_most: 0.279
+- source: native/story_mastery__1
+  box:
+  - 544
+  - 384
+  - 604
+  - 444
+  threshold: 0.845
+  seen_at_least: 0.965
+  elsewhere_at_most: 0.234
+- source: native/story_mastery__1
+  box:
+  - 464
+  - 336
+  - 672
+  - 376
+  threshold: 0.823
+  seen_at_least: 0.943
+  elsewhere_at_most: 0.298
+story_gate:
+- source: win/story_gate
+  box:
+  - 465
+  - 627
+  - 638
+  - 651
+  threshold: 0.7
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.387
+- source: win/story_gate
+  box:
+  - 878
+  - 627
+  - 1042
+  - 651
+  threshold: 0.7
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.411
+raid_act_picker:
+- source: native/raid_act_picker__1
+  box:
+  - 416
+  - 304
+  - 508
+  - 344
+  threshold: 0.862
+  seen_at_least: 0.982
+  elsewhere_at_most: 0.281
+- source: native/raid_act_picker__1
+  box:
+  - 352
+  - 192
+  - 412
+  - 252
+  threshold: 0.798
+  seen_at_least: 0.918
+  elsewhere_at_most: 0.232
+- source: native/raid_act_picker__1
+  box:
+  - 368
+  - 400
+  - 520
+  - 444
+  threshold: 0.789
+  seen_at_least: 0.909
+  elsewhere_at_most: 0.245
+sandbox_picker:
+- source: native/sandbox_picker__1
+  box:
+  - 1056
+  - 176
+  - 1264
+  - 216
+  threshold: 0.828
+  seen_at_least: 0.948
+  elsewhere_at_most: 0.311
+- source: native/sandbox_picker__1
+  box:
+  - 1056
+  - 496
+  - 1208
+  - 540
+  threshold: 0.85
+  seen_at_least: 0.97
+  elsewhere_at_most: 0.294
+- source: native/sandbox_picker__1
+  box:
+  - 704
+  - 368
+  - 856
+  - 412
+  threshold: 0.863
+  seen_at_least: 0.983
+  elsewhere_at_most: 0.325
+challenge_detail:
+- source: native/challenge_detail__1
+  box:
+  - 576
+  - 560
+  - 636
+  - 620
+  threshold: 0.7
+  seen_at_least: 0.777
+  elsewhere_at_most: 0.502
+- source: native/challenge_detail__1
+  box:
+  - 1072
+  - 624
+  - 1164
+  - 664
+  threshold: 0.7
+  seen_at_least: 0.786
+  elsewhere_at_most: 0.539
+- source: native/challenge_detail__1
+  box:
+  - 512
+  - 560
+  - 572
+  - 620
+  threshold: 0.7
+  seen_at_least: 0.718
+  elsewhere_at_most: 0.543
+challenges:
+- source: native/challenges__1
+  box:
+  - 240
+  - 464
+  - 300
+  - 524
+  threshold: 0.712
+  seen_at_least: 0.832
+  elsewhere_at_most: 0.357
+- source: native/challenges__1
+  box:
+  - 480
+  - 160
+  - 540
+  - 220
+  threshold: 0.793
+  seen_at_least: 0.913
+  elsewhere_at_most: 0.43
+- source: native/challenges__1
+  box:
+  - 256
+  - 240
+  - 464
+  - 280
+  threshold: 0.85
+  seen_at_least: 0.97
+  elsewhere_at_most: 0.476
+tournament:
+- source: native/tournament__1
+  box:
+  - 352
+  - 400
+  - 504
+  - 444
+  threshold: 0.845
+  seen_at_least: 0.965
+  elsewhere_at_most: 0.274
+- source: native/tournament__1
+  box:
+  - 304
+  - 320
+  - 512
+  - 360
+  threshold: 0.7
+  seen_at_least: 0.802
+  elsewhere_at_most: 0.306
+- source: native/tournament__1
+  box:
+  - 304
+  - 256
+  - 512
+  - 296
+  threshold: 0.747
+  seen_at_least: 0.867
+  elsewhere_at_most: 0.345
+global_tournament:
+- source: native/global_tournament__1
+  box:
+  - 304
+  - 288
+  - 512
+  - 328
+  threshold: 0.834
+  seen_at_least: 0.954
+  elsewhere_at_most: 0.181
+- source: native/global_tournament__1
+  box:
+  - 464
+  - 192
+  - 524
+  - 252
+  threshold: 0.855
+  seen_at_least: 0.975
+  elsewhere_at_most: 0.234
+- source: native/global_tournament__1
+  box:
+  - 352
+  - 496
+  - 504
+  - 540
+  threshold: 0.859
+  seen_at_least: 0.979
+  elsewhere_at_most: 0.315
+quests:
+- source: native/quests__1
+  box:
+  - 352
+  - 144
+  - 444
+  - 184
+  threshold: 0.702
+  seen_at_least: 0.822
+  elsewhere_at_most: 0.211
+- source: native/quests__1
+  box:
+  - 944
+  - 160
+  - 1152
+  - 200
+  threshold: 0.727
+  seen_at_least: 0.847
+  elsewhere_at_most: 0.275
+- source: native/quests__1
+  box:
+  - 1136
+  - 432
+  - 1196
+  - 492
+  threshold: 0.771
+  seen_at_least: 0.891
+  elsewhere_at_most: 0.317
+events:
+- source: native/events__1
+  box:
+  - 112
+  - 752
+  - 320
+  - 792
+  threshold: 0.702
+  seen_at_least: 0.822
+  elsewhere_at_most: 0.241
+story_maps:
+- source: win/story_maps
+  box:
+  - 75
+  - 72
+  - 225
+  - 108
+  threshold: 0.7
+  seen_at_least: 0.815
+  elsewhere_at_most: 0.362
+- source: win/story_maps
+  box:
+  - 30
+  - 747
+  - 195
+  - 786
+  threshold: 0.817
+  seen_at_least: 0.937
+  elsewhere_at_most: 1.0
+raid_maps:
+- source: native/raid_maps__1
+  box:
+  - 624
+  - 208
+  - 832
+  - 248
+  threshold: 0.872
+  seen_at_least: 0.992
+  elsewhere_at_most: 0.207
+- source: native/raid_maps__1
+  box:
+  - 656
+  - 256
+  - 808
+  - 300
+  threshold: 0.869
+  seen_at_least: 0.989
+  elsewhere_at_most: 0.204
+- source: native/raid_maps__1
+  box:
+  - 112
+  - 336
+  - 320
+  - 376
+  threshold: 0.862
+  seen_at_least: 0.982
+  elsewhere_at_most: 0.218
+boss_rush:
+- source: native/boss_rush__1
+  box:
+  - 416
+  - 560
+  - 624
+  - 600
+  threshold: 0.805
+  seen_at_least: 0.925
+  elsewhere_at_most: 0.118
+- source: native/boss_rush__1
+  box:
+  - 352
+  - 560
+  - 412
+  - 620
+  threshold: 0.791
+  seen_at_least: 0.911
+  elsewhere_at_most: 0.237
+- source: native/boss_rush__1
+  box:
+  - 656
+  - 192
+  - 864
+  - 232
+  threshold: 0.737
+  seen_at_least: 0.857
+  elsewhere_at_most: 0.298
+expedition:
+- source: native/expedition__1
+  box:
+  - 1200
+  - 512
+  - 1408
+  - 552
+  threshold: 0.866
+  seen_at_least: 0.986
+  elsewhere_at_most: 0.179
+- source: native/expedition__1
+  box:
+  - 944
+  - 480
+  - 1152
+  - 520
+  threshold: 0.859
+  seen_at_least: 0.979
+  elsewhere_at_most: 0.208
+- source: native/expedition__1
+  box:
+  - 400
+  - 480
+  - 608
+  - 520
+  threshold: 0.817
+  seen_at_least: 0.937
+  elsewhere_at_most: 0.182
+tower:
+- source: native/tower__1
+  box:
+  - 736
+  - 240
+  - 944
+  - 280
+  threshold: 0.855
+  seen_at_least: 0.975
+  elsewhere_at_most: 0.23
+- source: native/tower__1
+  box:
+  - 896
+  - 560
+  - 1104
+  - 600
+  threshold: 0.804
+  seen_at_least: 0.924
+  elsewhere_at_most: 0.2
+- source: native/tower__1
+  box:
+  - 240
+  - 720
+  - 448
+  - 760
+  threshold: 0.879
+  seen_at_least: 0.999
+  elsewhere_at_most: 0.336
+play_menu_top:
+- source: native/play_menu_top__1
+  box:
+  - 1376
+  - 352
+  - 1436
+  - 412
+  threshold: 0.83
+  seen_at_least: 0.95
+  elsewhere_at_most: 0.212
+- source: native/play_menu_top__1
+  box:
+  - 960
+  - 320
+  - 1020
+  - 380
+  threshold: 0.855
+  seen_at_least: 0.975
+  elsewhere_at_most: 0.278
+- source: native/play_menu_top__1
+  box:
+  - 832
+  - 560
+  - 1040
+  - 600
+  threshold: 0.829
+  seen_at_least: 0.949
+  elsewhere_at_most: 0.287
+play_menu_bottom:
+- source: native/play_menu_bottom__1
+  box:
+  - 1040
+  - 432
+  - 1192
+  - 476
+  threshold: 0.856
+  seen_at_least: 0.976
+  elsewhere_at_most: 0.15
+- source: native/play_menu_bottom__1
+  box:
+  - 0
+  - 80
+  - 208
+  - 120
+  threshold: 0.856
+  seen_at_least: 0.976
+  elsewhere_at_most: 0.159
+- source: native/play_menu_bottom__1
+  box:
+  - 288
+  - 144
+  - 496
+  - 184
+  threshold: 0.855
+  seen_at_least: 0.975
+  elsewhere_at_most: 0.156
+match:
+- source: native/match__1
+  box:
+  - 1279
+  - 411
+  - 1425
+  - 447
+  threshold: 0.7
+  seen_at_least: 0.711
+  elsewhere_at_most: 0.245
+game_settings:
+- source: win/game_settings
+  box:
+  - 208
+  - 624
+  - 416
+  - 664
+  threshold: 0.873
+  seen_at_least: 0.993
+  elsewhere_at_most: 0.039
+- source: win/game_settings
+  box:
+  - 896
+  - 528
+  - 1104
+  - 568
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.043
+- source: win/game_settings
+  box:
+  - 432
+  - 496
+  - 584
+  - 540
+  threshold: 0.88
+  seen_at_least: 1.0
+  elsewhere_at_most: 0.051
+lobby:
+- source: native/lobby__1
+  box:
+  - 16
+  - 336
+  - 108
+  - 376
+  threshold: 0.802
+  seen_at_least: 0.922
+  elsewhere_at_most: -1.0
+- source: native/lobby__1
+  box:
+  - 64
+  - 496
+  - 156
+  - 536
+  threshold: 0.809
+  seen_at_least: 0.929
+  elsewhere_at_most: -1.0
+- source: native/lobby__1
+  box:
+  - 16
+  - 416
+  - 168
+  - 460
+  threshold: 0.775
+  seen_at_least: 0.895
+  elsewhere_at_most: -1.0

@@ -1,0 +1,33 @@
+# Rose Kingdom, first plan (10 Nov 2026). View yaw -30 (the castle wall and the lane's short
+# stretches level), zoom 0. The lane leaves the castle gate at the top, jogs left, then winds
+# down the middle and off the bottom. Spots from the spot scan.
+steps:
+  - {place: 6, at: [190, 510]}               # Stone Alchemists, far left
+  - {place: 6, at: [240, 510]}
+  - {place: 6, at: [240, 560]}
+  - {place: 1, at: [740, 410]}               # Atom #1 inside the lane's upper bends
+  - {place: 5, at: [790, 360]}               # Teacher beside it
+  - {place: 4, at: [690, 410]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {upgrade: [740, 410], cost: 2850}
+  - {place: 1, at: [790, 510]}               # Atom #2 by the middle stretch
+  - {place: 4, at: [740, 510]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [190, 510]}                        # farms on Auto Upgrade once the defence stands
+  - {auto: [240, 510]}
+  - {auto: [240, 560]}
+  - {place: 5, at: [840, 510]}               # Teacher beside Atom #2
+  - {upgrade: [740, 410], cost: 4150}
+  - {place: 3, at: [740, 460]}               # First Blade on the lane's middle
+  - {upgrade: [790, 510], cost: 2850}
+  - {place: 1, at: [690, 560]}               # Atom #3 by the lower stretch
+  - {place: 2, at: [640, 410]}               # 8th Sword by the jog
+  - {upgrade: [740, 410], cost: 4950}
+  - {upgrade: [740, 410], cost: 5850}
+  - {upgrade: [790, 510], cost: 4150}
+  - {upgrade: [740, 410], cost: 6600}
+  - {upgrade: [740, 410], cost: 8550}
+  - {upgrade: [740, 410], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [690, 560], cost: 2850}
+  - {upgrade: [790, 510], cost: 4950}
+  - {upgrade: [740, 460]}
+  - {upgrade: [790, 360]}
+  - {upgrade: [840, 510]}

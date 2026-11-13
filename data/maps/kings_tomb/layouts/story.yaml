@@ -1,0 +1,34 @@
+# King's Tomb, first plan (10 Nov 2026). View yaw +28 (the "+"-shaped lane's top bar level),
+# zoom 0. The path is a ring of grey lanes around the central star, so Atoms stand in the
+# middle, where their range reaches every side, each with a Forbidden Teacher beside it
+# (Magical buff). Farms in the top-left corner, far from the lanes. Spots from the spot scan.
+steps:
+  - {place: 6, at: [190, 110]}               # Stone Alchemists, top-left corner
+  - {place: 6, at: [240, 110]}
+  - {place: 6, at: [290, 110]}
+  - {place: 1, at: [690, 460]}               # Atom #1, middle, just below spawn
+  - {place: 5, at: [740, 460]}               # Teacher beside it
+  - {place: 4, at: [690, 410]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {upgrade: [690, 460], cost: 2850}
+  - {place: 1, at: [790, 310]}               # Atom #2, inside the ring, upper right
+  - {place: 4, at: [790, 260]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [190, 110]}                        # farms on Auto Upgrade once the defence stands
+  - {auto: [240, 110]}
+  - {auto: [290, 110]}
+  - {place: 5, at: [840, 310]}               # Teacher beside Atom #2
+  - {upgrade: [690, 460], cost: 4150}
+  - {place: 3, at: [640, 510]}               # First Blade, middle: shields and buff
+  - {upgrade: [790, 310], cost: 2850}
+  - {place: 1, at: [590, 510]}               # Atom #3, inside the ring, lower left
+  - {place: 2, at: [740, 510]}               # 8th Sword, middle
+  - {upgrade: [690, 460], cost: 4950}
+  - {upgrade: [690, 460], cost: 5850}
+  - {upgrade: [790, 310], cost: 4150}
+  - {upgrade: [690, 460], cost: 6600}
+  - {upgrade: [690, 460], cost: 8550}
+  - {upgrade: [690, 460], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [590, 510], cost: 2850}
+  - {upgrade: [790, 310], cost: 4950}
+  - {upgrade: [640, 510]}
+  - {upgrade: [740, 460]}
+  - {upgrade: [840, 310]}

@@ -1,0 +1,48 @@
+measured: 2026-11-09 17:41
+platform: win32
+scene: Sandbox, School Grounds
+graphics_quality: 1
+mouse_settings:
+  enhance_pointer_precision: true
+  pointer_speed: 10
+  buttons_swapped: false
+still_scene_noise:
+  inliers: 2965
+  scale: 1.0
+  roll: -0.0
+  dx: -0.0
+  dy: 0.0
+zoom_notches_to_full_out: 10
+pitch_clamped_at_3000: true
+yaw_deg_per_count: 0.07998
+yaw_counts_per_circle: 4501
+yaw_samples:
+- - 100
+  - 7.92
+- - 200
+  - 15.67
+- - 400
+  - 30.05
+yaw_return_error_px: 0.0
+yaw_200_counts_by_speed:
+  fast: 15.05
+  normal: 15.57
+  slow: 15.94
+yaw_speed_independent: true
+yaw_full_circle_result:
+  inliers: 2099
+  scale: 1.0001
+  roll: -0.04
+  dx: 0.0
+  dy: 0.0
+walk_px_per_s: 191.2
+walk_px_per_s_by_key:
+  w: 192.0
+  a: 191.2
+  d: 196.4
+  s: 183.3
+walk_return_drift_px_worst: 1.2
+walk_blocked_runs: 0
+game_size:
+- 1440
+- 810

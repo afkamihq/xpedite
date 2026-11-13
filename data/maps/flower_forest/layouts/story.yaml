@@ -1,0 +1,33 @@
+# Flower Forest, first plan (10 Nov 2026). View yaw -30 (the lane's horizontal stretches level),
+# zoom 0. The pink lane comes down from the stump at the top, steps right, then winds down to
+# the bottom left. Little open ground: 24 valid spots, all near the lane, from the spot scan.
+steps:
+  - {place: 6, at: [840, 260]}               # Stone Alchemists, upper right, off the lane
+  - {place: 6, at: [940, 260]}
+  - {place: 6, at: [840, 310]}
+  - {place: 1, at: [690, 360]}               # Atom #1 beside the upright stretch and the step
+  - {place: 5, at: [740, 360]}               # Teacher beside it
+  - {place: 4, at: [690, 310]}   # Sovereign (Djinn) by Atom #1: cheap, chains
+  - {upgrade: [690, 360], cost: 2850}
+  - {place: 1, at: [590, 560]}               # Atom #2 over the lower bends
+  - {place: 4, at: [590, 510]}   # Sovereign (Djinn) by Atom #2
+  - {auto: [840, 260]}                        # farms on Auto Upgrade once the defence stands
+  - {auto: [940, 260]}
+  - {auto: [840, 310]}
+  - {place: 5, at: [540, 560]}               # Teacher beside Atom #2
+  - {upgrade: [690, 360], cost: 4150}
+  - {place: 3, at: [640, 460]}               # First Blade inside the step
+  - {upgrade: [590, 560], cost: 2850}
+  - {place: 1, at: [740, 310]}               # Atom #3 near the top of the lane
+  - {place: 2, at: [640, 360]}               # 8th Sword by the upright stretch
+  - {upgrade: [690, 360], cost: 4950}
+  - {upgrade: [690, 360], cost: 5850}
+  - {upgrade: [590, 560], cost: 4150}
+  - {upgrade: [690, 360], cost: 6600}
+  - {upgrade: [690, 360], cost: 8550}
+  - {upgrade: [690, 360], cost: 9750}        # UPG 7: Complete Nuclear
+  - {upgrade: [740, 310], cost: 2850}
+  - {upgrade: [590, 560], cost: 4950}
+  - {upgrade: [640, 460]}
+  - {upgrade: [740, 360]}
+  - {upgrade: [540, 560]}
