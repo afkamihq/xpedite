@@ -16,9 +16,9 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
@@ -46,7 +46,19 @@ jobs:
           cat selftest.txt; rm -f selftest.txt
           exit $code
 
-      - uses: actions/upload-artifact@v4
+      # On every build, so a push to main shows a notes problem before a tag's release needs them.
+      - name: Release notes
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            version="$GITHUB_REF_NAME"
+          else
+            version=$(python -c "from macro.version import VERSION; print(VERSION)")
+          fi
+          python packaging/notes.py "$version" > notes.md
+          cat notes.md
+
+      - uses: actions/upload-artifact@v7
         with:
           name: xpedite-zips
           path: dist/*.zip
@@ -58,5 +70,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          python packaging/notes.py "$GITHUB_REF_NAME" > notes.md
           gh release create "$GITHUB_REF_NAME" dist/*.zip --title "xpedite $GITHUB_REF_NAME" --notes-file notes.md
