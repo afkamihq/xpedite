@@ -1,0 +1,12 @@
+# Expedition, tail first (15 Nov 2026). The payload drives DOWN the screen: its TAIL is the top end
+# and takes most of the enemies, the head (bottom, cyan crystal) only a few (user). Damage and
+# support on the tail, the farm on the head. With the starting 3,500 Yen the first four go down
+# (Atom 1,250, Black Heart 700, Teacher 800, Alchemist 550); 8th Sword and Starrk as Yen comes.
+# Spots tested live; corners and spots next to a unit already there are refused.
+steps:
+  - {place: 1, at: [705, 320]}   # Atom, the very tail
+  - {place: 4, at: [655, 345]}   # Black Heart beside it
+  - {place: 5, at: [755, 345]}   # Forbidden Teacher: buffs Magical units in range (Atom, Black Heart)
+  - {place: 6, at: [705, 515]}   # Stone Alchemist on the head (farm)
+  - {place: 2, at: [705, 378]}   # 8th Sword
+  - {place: 3, at: [655, 392]}   # Wolf (Starrk)

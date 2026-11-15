@@ -17,9 +17,25 @@ TRACKED = {
     "Crumbling Fragment": ("crumbl", "fragmen"),
     "Trait Crystal": ("traitcr", "traltcr", "trait", "tralt"),
     "Candy Corn": ("candycorn", "candyc", "candy"),
+    # Expeditions (15 Nov 2026): each map's own material, Fuel Cells (the blue vial, which the Hub
+    # turns into gold) and Expedition Coins. Names wrap onto two lines; the first is matched.
+    "Cursed Timber": ("cursed",),
+    "Lush Dirt": ("lush",),
+    "Aqua Shard": ("aqua",),
+    "Mechanical Scrap": ("mechanic",),
+    "Fuel Cell": ("fuel",),
+    "Expedition Coin": ("expedition",),
 }
 COUNT = re.compile(r"^(\d[\d,]*)\s*[xX]$")
 MAX_GAP = 75  # px at 1440 wide: a name sits at most this far right of its tile's count
+
+
+def _count_text(text: str) -> str:
+    """The game's italic badge digits: 1 comes back as b, T, l or I now and then ("11x" -> "Tbx")."""
+    t = text.strip().replace("×", "x")
+    if t[-1:] in "xX":
+        t = t[:-1].translate(str.maketrans("bTlI|o", "11111" + "0")) + "x"
+    return t
 
 
 def read_rewards(frame: np.ndarray) -> dict[str, int]:
@@ -27,7 +43,7 @@ def read_rewards(frame: np.ndarray) -> dict[str, int]:
     box = tuple(round(v * SCALE) for v in STRIP)
     words = ocr.find_words(frame, box)
     counts = [(x, int(m.group(1).replace(",", ""))) for text, x, _ in words
-              if (m := COUNT.match(text.strip()))]
+              if (m := COUNT.match(_count_text(text)))]
     found: dict[str, int] = {}
     for text, x, _ in words:
         simple = re.sub(r"[^a-z]", "", text.lower())

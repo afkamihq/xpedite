@@ -1,7 +1,8 @@
 """Setup: everything a new user needs set right before the macro can play, in one window.
-Left, this PC and Roblox (read from Windows and Roblox's settings file, instantly). Right, the
-game itself: one button checks and sets the game's own settings and reads the team off the
-hotbar, then says how the team compares with a good one.
+Left, this PC and Roblox (read from Windows and Roblox's settings file, instantly) and a quick
+start: the private server link and an Expedition task in three picks. Right, the game itself: one
+button checks and sets the game's own settings and reads the team off the hotbar, then says how
+the team compares with a good one.
 """
 from __future__ import annotations
 
@@ -9,13 +10,18 @@ import os
 import threading
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from theme import BAD, GOOD, WARN
-from ui import Card, SubWindow, icon, label
+from ui import Card, NavButton, SettingRow, SubWindow, icon, label, rows, secret_field
 
 DONE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "setup_done")
 ROLE_WORDS = {"dps": "Damage", "support": "Support", "farm": "Farm"}
+# Quick start's Expedition goals -> minimums on the route (rerolled until a route promises them).
+# Starting points from School Grounds difficulty 1 routes (15 Nov 2026: Cursed Timber 7-25, Fuel
+# Cells 1-16 a route); Tasks changes them per map and difficulty.
+GOALS = {"Its material": {"material": 18}, "Fuel Cells": {"Fuel Cell": 8},
+         "Both": {"material": 15, "Fuel Cell": 6}, "Just play": {}}
 
 
 def _row(ok: bool | None, title: str, found: str, fix: str = "") -> QWidget:
@@ -40,11 +46,18 @@ def _row(ok: bool | None, title: str, found: str, fix: str = "") -> QWidget:
 
 class SetupWindow(SubWindow):
     def __init__(self, main):
-        super().__init__(main, "Setup", "Get everything ready to play", (900, 640), "config")
+        super().__init__(main, "Setup", "Get everything ready to play", (900, 760), "config")
         row = QHBoxLayout()
         row.setSpacing(12)
         self.pc = Card("This PC and Roblox", icon_name="game", spacing=2)
-        row.addWidget(self.pc, 1)
+        left = QVBoxLayout()
+        left.setSpacing(12)
+        left.addWidget(self.pc, 1)
+        second = NavButton("session", "Farm in a second session", "Keep using this PC while it plays")
+        second.clicked.connect(self.open_second_session)
+        left.addWidget(second)
+        left.addWidget(self._quick_start())
+        row.addLayout(left, 1)
 
         right = QVBoxLayout()
         right.setSpacing(12)
@@ -79,6 +92,69 @@ class SetupWindow(SubWindow):
         self.pc.add(label("All set." if not bad else f"{bad} thing{'s' if bad != 1 else ''} to change.",
                           "muted"))
         self.pc.box.addStretch(1)
+
+    def _quick_start(self) -> Card:
+        """The private server and a first Expedition task, for players who'd rather not read Config
+        and Tasks first."""
+        from macro.modes import expedition
+        from macro.platform import links
+        card = Card("Quick start", icon_name="play", spacing=0)
+        server_box, self.server = secret_field("roblox.com/share?code=...")
+        server_box.setFixedWidth(230)
+        self.server.setText(str(self.main.config.settings.get("private_server") or ""))
+        self.server_note = label(links.describe(self.server.text()), "dim")
+        self.server.textChanged.connect(lambda text: self.server_note.setText(links.describe(text)))
+        self.server.editingFinished.connect(self.save_server)
+        self.exp_map = QComboBox()
+        self.exp_map.addItems(expedition.MAPS)
+        self.exp_difficulty = QComboBox()
+        self.exp_difficulty.addItems(["1", "2", "3"])
+        self.exp_goal = QComboBox()
+        self.exp_goal.addItems(list(GOALS))
+        add = QPushButton("Add an Expedition task")
+        add.setObjectName("primary")
+        add.clicked.connect(self.add_expedition)
+        rows(card, SettingRow("Private server", server_box))
+        card.add(self.server_note)
+        rows(card, SettingRow("Expedition", self.exp_map), SettingRow("Difficulty", self.exp_difficulty),
+             SettingRow("Reroll for", self.exp_goal))
+        card.add(add)
+        return card
+
+    def save_server(self):
+        config = self.main.config
+        if config.private_server.text().strip() != self.server.text().strip():
+            config.private_server.setText(self.server.text().strip())
+            config.save()
+            self.main.toast("Private server saved", "good")
+
+    def add_expedition(self):
+        """Writes the map's reroll rule (data/expedition.yaml) and adds the task, forever."""
+        from macro.modes import expedition
+        name = self.exp_map.currentText()
+        difficulty = int(self.exp_difficulty.currentText())
+        goal = GOALS[self.exp_goal.currentText()]
+        minimums = {(expedition.MATERIAL[name] if key == "material" else key): {"on": True, "min": least}
+                    for key, least in goal.items()}
+        settings = expedition.load_settings()
+        settings.setdefault("maps", {})[f"{name}|{difficulty}"] = {
+            "reroll": bool(minimums), "match": "all", "minimums": minimums, "max_rerolls": 50,
+            "when_none": "best", "capped_counts_zero": True}
+        expedition.save_settings(settings)
+        tasks = self.main.tasks
+        tasks._exp = expedition.load_settings()  # the Tasks card shows (and saves) the new rule
+        tasks.exp_load_rule()
+        tasks._append({"mode": "expedition", "map": name, "difficulty": difficulty, "plan": "tail", "times": 0})
+        tasks.save()
+        wanted = ", ".join(f"{k} {v['min']}" for k, v in minimums.items()) or "no rerolls"
+        self.main.toast(f"Added: Expedition {name} D{difficulty}, forever ({wanted}). Start with F2.", "good")
+
+    def open_second_session(self):
+        """Made on first use: most players never open it."""
+        if getattr(self.main, "second_session", None) is None:
+            from second_session_window import SecondSessionWindow
+            self.main.second_session = SecondSessionWindow(self.main)
+        self.main.second_session.open()
 
     @staticmethod
     def _clear(layout, keep: int = 0):

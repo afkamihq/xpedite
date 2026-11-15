@@ -1,0 +1,33 @@
+# Exact versions for the exe build: the ones the farm has run on (uv-made .venv-win), plus
+# PyInstaller. pip needs --ignore-requires-python: rapidocr-onnxruntime 1.4.4 says <3.13 but runs
+# on 3.13 (pip alone falls back to 1.2.3, whose results differ).
+cffi==2.1.1
+colorama==0.4.6
+comtypes==1.4.17
+cryptography==50.0.2
+dxcam==0.3.0
+flatbuffers==25.12.19
+numpy==2.5.4
+onnxruntime==1.31.1
+opencv-python==5.0.0.93
+opencv-python-headless==5.0.0.93
+packaging==26.3
+pillow==13.0.0
+protobuf==7.36.2
+psutil==7.2.2
+pyclipper==1.4.0
+pycparser==3.12
+PyQt6==6.12.0
+PyQt6-Qt6==6.12.0
+PyQt6_sip==13.13.0
+PyYAML==6.0.3
+rapidocr-onnxruntime==1.4.4
+shapely==2.2.0
+six==1.17.0
+tqdm==4.70.1
+altgraph==0.17.5
+pefile==2024.8.26
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.10
+pywin32-ctypes==0.2.3
+setuptools==84.2.1

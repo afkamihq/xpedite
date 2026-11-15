@@ -369,6 +369,7 @@ UM_PANEL = (950, 150, 1440, 750)  # the list of placed units, left of nothing bu
 UM_SCROLL_AT = (1190, 450)
 UM_OFF_CARDS = (1200, 790)  # a hover spot where no tooltip hides a button
 PHANTOM_TOGGLE = (1317, 111)
+AUTO_TOGGLE = (1202, 111)  # "Auto Upgrading", left of Phantom Placing
 # Scrolling 15 moves the list ~102 px; rows are ~283 px apart and a card is ~150 px tall, so 75
 # (~510 px) shows every card whole on some page (the last ones once the list stops at its end).
 UM_PAGE_SCROLL = 75
@@ -502,6 +503,24 @@ def close_unit_manager(p, nav):
 def _toggle_paused(frame, x: int, y: int) -> bool:
     patch = frame[y - 8:y + 8, x - 40:x + 40].astype(int)
     return (patch[:, :, 2] - patch[:, :, 1]).mean() > 40  # red "Paused"; teal "Active"
+
+
+def set_auto_upgrading(p, nav, active: bool, log) -> bool:
+    """The Unit Manager's Auto Upgrading toggle (the game keeps it from one match to the next:
+    an Expedition run that paused it to keep Yen for the shop left every later Soul Furnace run
+    without upgrades, all lost at wave 9 on 15 Nov 2026). Leaves the Unit Manager open."""
+    if not open_unit_manager(p, nav, log):
+        return False
+    for _ in range(3):
+        p.hover(*UM_OFF_CARDS)
+        p.sleep(0.2)
+        if _toggle_paused(p.grab(), *AUTO_TOGGLE) != active:
+            return True
+        log(f"Auto Upgrading was {'paused' if active else 'active'}: switching it")
+        p.click(*AUTO_TOGGLE)
+        p.sleep(0.5)
+    log("the Auto Upgrading toggle didn't change")
+    return False
 
 
 def set_phantom_placing(p, nav, active: bool, log) -> bool:
@@ -1023,6 +1042,7 @@ def play_furnace(nav, reader, profile, plan, *, fresh: bool, spa_target: int = S
     recheck_needed = True
     if not resume:
         set_phantom_placing(p, nav, True, um_log)
+        set_auto_upgrading(p, nav, True, um_log)
         changed, _ = set_auto_upgrades(p, nav, um_log, order=order)
         recheck_needed = getattr(set_auto_upgrades, "problems", 1) > 0 or changed < result.phantoms
         close_unit_manager(p, nav)

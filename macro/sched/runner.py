@@ -22,7 +22,8 @@ import yaml
 from macro import brand
 from macro.control import maps, plans
 from macro.control.engine import read_hotbar_costs
-from macro.modes import challenge, furnace, rewards, story, trick
+from macro.control.placing import Placer
+from macro.modes import challenge, expedition, furnace, rewards, story, trick
 from macro.modes.collect import collect_rewards
 from macro.nav import stages
 from macro.nav.currency import SpendingDetected, SpendingWatch
@@ -38,7 +39,7 @@ MAX_FAILURES = 3  # in a row, on one entry, before moving to the next
 LOBBY_EVERY = 10  # matches in a row without the lobby, before a visit to check gems and collect rewards
 RESUME_IDLE = 2.0  # hands off this long after Resume
 AUTO_RESUME = 3.0  # a pause ends by itself once mouse and keyboard have been still this long (0: never)
-ACCEPTED_MODES = ("story", "sandbox", "challenge", "trick", "furnace")
+ACCEPTED_MODES = ("story", "sandbox", "challenge", "trick", "furnace", "expedition")
 SANDBOX_BUTTONS = {"School Grounds": "school_grounds", "Flower Forest": "flower_forest", "Rose Kingdom": "rose_kingdom",
                    "Fairy King Forest": "fairy_king_forest", "King's Tomb": "kings_tomb", "East Town": "east_town",
                    "Crimson Shore": "crimson_shore", "Flaming Monastery": "flaming_monastery"}
@@ -69,6 +70,12 @@ def clean_entry(entry) -> tuple[dict | None, str]:
         return {"mode": mode, "map": "Soul Furnace", "act": None, "difficulty": "Hard",
                 "plan": str(entry.get("plan") or "paths"), "times": times,
                 "spa_boosts": max(0, spa), "after_spa": after if after in furnace.RECIPES or after == "none" else "random_unit"}, ""
+    if mode == "expedition":
+        # Play -> Expedition: one of four maps at difficulty 1-3; the rest is data/expedition.yaml.
+        map_name = entry.get("map") if entry.get("map") in expedition.MAPS else "School Grounds"
+        difficulty = max(1, min(3, plans._number(entry.get("difficulty"), 1)))
+        return {"mode": mode, "map": map_name, "act": None, "difficulty": difficulty,
+                "plan": "tail", "times": times}, ""
     if mode == "challenge":
         # Which stage is only known once the Challenges window is read, at play time.
         kind = "daily" if str(entry.get("map", "")).lower().startswith("daily") else "regular"
@@ -154,6 +161,8 @@ def describe(entry: dict) -> str:
     if str(entry.get("mode")) == "furnace":
         return (f"Soul Furnace Infinite: plan {entry.get('plan', 'paths')}, Souls to SPA, Unbound Tomes, "
                 f"Random Units, more Unbound, then the Final Boss, {times}")
+    if str(entry.get("mode")) == "expedition":
+        return f"Expedition: {entry.get('map')}, difficulty {entry.get('difficulty')}, {times}"
     if str(entry.get("mode")) == "trick":
         knocks = "forever" if not entry.get("times") else f"{entry['times']} knocks"
         return f"Trick or Treat: the lobby's doors, {knocks}"
@@ -398,7 +407,8 @@ class QueueRunner(threading.Thread):
         if frame is None:
             return
         self._last_loot = {}
-        if outcome == "victory":
+        # An Expedition pays on a Defeat or an Extract too (what the run had earned).
+        if outcome == "victory" or entry.get("mode") == "expedition":
             try:
                 self._last_loot = rewards.read_rewards(frame)
             except Exception as error:  # a tally is a nicety: never let it stop the run
@@ -437,6 +447,8 @@ class QueueRunner(threading.Thread):
             kind = f"{entry.get('kind', 'regular').capitalize()} challenge"
         elif mode == "sandbox":
             stage, kind = f"{entry['map']} \u00b7 Sandbox", "Sandbox test"
+        elif mode == "expedition":
+            stage, kind = f"{entry['map']} · Difficulty {entry['difficulty']}", "Expedition"
         elif mode == "trick":
             stage = f"{entry['map']} \u00b7 Act {entry.get('act') or '?'} \u00b7 Hard"
             kind = "Halloween Trick"
@@ -446,6 +458,14 @@ class QueueRunner(threading.Thread):
         title = f"{outcome.capitalize()} \u00b7 {stage}"
         lines = [f"**{kind}** cleared in **{webhook.clock(seconds)}**" if outcome == "victory"
                  else f"**{kind}**, {outcome} after **{webhook.clock(seconds)}**", ""]
+        exp = getattr(self, "_exp_last", None) if mode == "expedition" else None
+        if exp is not None:
+            lines.append(f"`ROUTE ` {exp.rewards.text() if exp.rewards else 'not read'}")
+            lines.append(f"`ROLLS ` **{exp.rerolls}** restarts · **{exp.nodes}** nodes left behind")
+            if exp.levelups:
+                lines.append(f"`LEVELS` {', '.join(exp.levelups[:8])}")
+            if exp.notes:
+                lines.append(f"-# {'; '.join(exp.notes[:6])}")
         if result is not None and result.waves_seen:
             wave, total = result.waves_seen[-1]
             if total:
@@ -636,10 +656,16 @@ class QueueRunner(threading.Thread):
             fresh = False
             matches = (inside["matches"] if inside else 0) + 1
         elif screen == "match" and story.start_window_showing(p.grab()):
-            # A match already waiting at "Start Game?" (the app was restarted just after Retry):
-            # played from where it is. Phantoms already queued answer "limit".
-            self._log("a Soul Furnace match is waiting at Start Game: playing it")
-            fresh = False
+            # A match already waiting at "Start Game?" was set up, maybe half way, by an earlier
+            # copy of the app (restarted just after Retry, or by the supervisor after an error). It
+            # used to be played from there on the idea that phantoms already queued answer "limit":
+            # they don't, ours went on top of the old ones (nudged off the taken spots) and that run
+            # died at wave 12 (13 Nov 2026, 14:06). A clean match costs a minute.
+            self._log("a Soul Furnace match is waiting at Start Game from before: leaving it for a clean one")
+            nav.go("lobby", on_lost=recovery)
+            self._balance(nav, watch, recovery)
+            nav.go("soul_furnace_picker", on_lost=recovery)
+            stages.start_from_picker(nav, "soul_furnace_picker")
             matches = 1
         else:
             if self._inside:
@@ -672,6 +698,68 @@ class QueueRunner(threading.Thread):
         self._furnace_report(entry, result, frame)
         if result.outcome not in story.RESULT_SCREENS and result.outcome != "stopped":
             nav.go("lobby", on_lost=recovery)
+        return {"outcome": result.outcome}
+
+    def _play_expedition(self, entry, nav, reader, recovery, watch, costs) -> dict:
+        """One Expedition run: Repeat Stage from the last run's results when it was the same map and
+        difficulty, else Play -> Expedition -> map -> difficulty -> Select Stage -> Start. Then reroll
+        until a route meets the user's minimums (data/expedition.yaml), and play it out."""
+        p = self.p
+        settings = expedition.load_settings()
+        rule = expedition.rule_for(settings, entry["map"], entry["difficulty"])
+        stage = ("expedition", entry["map"], entry["difficulty"])
+        inside = self._inside if self._inside and self._inside.get("stage") == stage else None
+        screen = nav.settle()
+        if screen in story.RESULT_SCREENS and inside:
+            self._log("repeating the Expedition from the results")
+            p.click(*expedition.REPEAT_STAGE)
+            matches = inside["matches"] + 1
+        else:
+            if self._inside:
+                self._to_lobby(nav, recovery, watch)
+            self._balance(nav, watch, recovery)
+            nav.go("expedition", on_lost=recovery)
+            expedition.pick_stage(p, entry["map"], entry["difficulty"], self._log)
+            stages.start_from_picker(nav, "expedition")
+            matches = 1
+        self._inside = None
+        end = time.time() + 60
+        while time.time() < end and not expedition.run_started(p.grab()):
+            p.sleep(0.5)
+        if not expedition.run_started(p.grab()):
+            raise NavError("the Expedition never showed its start")
+        self.stats.task = f"Expedition {entry['map']} D{entry['difficulty']}"
+        self._send_stats()
+        promised, rolls = None, 0
+        if rule.get("reroll", True):
+            promised, rolls = expedition.reroll(p, rule, self._log, self.stop_requested.is_set)
+            if promised is None:
+                what = rule.get("when_none", "best")
+                self._log(f"no Expedition route met the minimums ({rolls} rerolls): {what}")
+                if what == "stop":
+                    self.stop_requested.set()
+                return {"outcome": "skipped"}
+        run = expedition.Expedition(p, reader, settings, slot_roles(), log=self._log,
+                                    should_stop=self.stop_requested.is_set)
+        run.rule = rule
+        run.nav = nav
+        run.map_name = entry.get("map", "")
+        result = run.play(Placer(p, reader, self._log), nav.detector)
+        result.rerolls, result.rewards = rolls, promised
+        frame = None
+        if result.outcome == "extracted" and nav.settle() in story.RESULT_SCREENS:
+            p.sleep(2.0)
+            frame = p.grab()
+            self._inside = {"stage": stage, "yaw": 0, "matches": matches}
+        elif result.outcome in story.RESULT_SCREENS:
+            p.sleep(3.0)
+            frame = p.grab()
+            self._inside = {"stage": stage, "yaw": 0, "matches": matches}
+        self._log(f"Expedition: {result.outcome} after {result.seconds:.0f} s, {result.nodes} nodes left, "
+                  f"{rolls} rerolls, level-ups {', '.join(result.levelups) or 'none'}"
+                  + (f"; {'; '.join(result.notes)}" if result.notes else ""))
+        self._exp_last = result
+        self._report(entry, result.outcome, result.seconds, frame, None)
         return {"outcome": result.outcome}
 
     def _furnace_report(self, entry, result, frame):
@@ -731,6 +819,8 @@ class QueueRunner(threading.Thread):
             self._log(f"webhook didn't send: {error}")
 
     def _play_once(self, entry, nav, reader, recovery, watch, costs) -> dict:
+        if entry["mode"] == "expedition":
+            return self._play_expedition(entry, nav, reader, recovery, watch, costs)
         if entry["mode"] == "furnace":
             return self._play_furnace(entry, nav, reader, recovery, watch, costs)
         if entry["mode"] == "trick":

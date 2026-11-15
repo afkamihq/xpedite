@@ -37,7 +37,7 @@ from glass import Backdrop, paint_glass, paint_shadow, qimage_to_bgr  # noqa: E4
 from theme import BAD, ICON_FONT, ICONS, MUTED, QSS, WARN  # noqa: E402
 from ui import Card, KeyRow, NavButton, Pill, Stat, SubWindow, Toast, icon, label, load_yaml  # noqa: E402
 
-VERSION = "0.4.0"
+from macro.version import VERSION  # noqa: E402
 WM_HOTKEY = 0x0312
 VK = {"F1": 0x70, "F2": 0x71, "F3": 0x72, "F4": 0x73, "F5": 0x74, "F6": 0x75, "F7": 0x76}
 AMBIENT_EVERY = 3000  # ms between pictures of the game for the glass to take its light from
@@ -69,6 +69,7 @@ class Bridge(QObject):
     toast = pyqtSignal(str, str)
     hotkey = pyqtSignal(str)
     setup = pyqtSignal(object)
+    update = pyqtSignal(str, object, str)  # state, release, detail
 
 
 class MainWindow(QWidget):
@@ -125,6 +126,7 @@ class MainWindow(QWidget):
         b.picture.connect(self.picture_done)
         b.toast.connect(self.toast)
         b.hotkey.connect(self.hotkey_pressed)
+        b.update.connect(self.update_state)
 
         self.keeper = QTimer(self)
         self.keeper.timeout.connect(self.keep_together)
@@ -155,6 +157,14 @@ class MainWindow(QWidget):
         self.presence_timer = QTimer(self)
         self.presence_timer.timeout.connect(self.presence_tick)
         self.presence_timer.start(30_000)
+        # Updates (macro/update.py): a look at the newest release soon after opening and every 6 h;
+        # one is installed by itself when nothing is running (Config: Update by itself).
+        self.update_waiting = None
+        self.updating = False
+        QTimer.singleShot(6000, self.check_updates)
+        self.update_timer = QTimer(self)
+        self.update_timer.timeout.connect(self.check_updates)
+        self.update_timer.start(6 * 3600 * 1000)
         if not os.path.exists(os.path.join(ROOT, "data", "setup_done")):
             QTimer.singleShot(1500, self.setup_window.open)  # a new user starts with Setup
 
@@ -754,7 +764,83 @@ class MainWindow(QWidget):
         if self.paused:
             self.toast(f"Paused: {reason}. Resume or F6 to carry on.", "warn")
 
+    # ------------------------------------------------------------------------------ updates
+    def check_updates(self, manual=False):
+        from macro import update
+
+        def work():
+            state, release = update.check(VERSION)
+            self.bridge.update.emit(state, release, "manual" if manual else "")
+        threading.Thread(target=work, daemon=True).start()
+
+    def update_state(self, state, release, detail):
+        if state in ("development", "offline", "current", "available"):
+            self.about.show_update(state, release)
+            manual = detail == "manual"
+            if state == "available":
+                self.log(f"{brand.UNIT} {release['version']} is out (this is {VERSION})")
+                if manual or load_settings().get("auto_update", True):
+                    self.install_update(release)
+                else:
+                    self.toast(f"{brand.UNIT} {release['version']} is out: About installs it")
+            elif manual:
+                self.toast({"current": "Up to date", "offline": "Couldn't reach GitHub",
+                            "development": "Development copy: update it with git"}[state],
+                           "good" if state == "current" else "warn")
+        elif state == "downloading":
+            self.about.show_update(state, release, detail)
+        elif state == "failed":
+            self.updating = False
+            self.about.show_update(state, release, detail)
+            self.log(f"update failed: {detail}")
+            self.toast(f"The update didn't install: {detail}", "bad")
+        elif state == "ready":
+            self.log(f"installing {brand.UNIT} {release['version']}; it opens again by itself")
+            self.toast(f"Updating to {release['version']}: back in a moment")
+            from macro import update
+            try:
+                update.install_and_restart(detail)
+            except OSError as error:
+                self.update_state("failed", release, str(error))
+                return
+            QTimer.singleShot(1200, self.close)
+            QTimer.singleShot(4000, QApplication.instance().quit)
+
+    def install_update(self, release):
+        """Downloads the release and restarts into it; while a queue runs it waits for the end."""
+        if self.updating:
+            return
+        if self.busy():
+            if self.update_waiting is None:
+                self.toast(f"{brand.UNIT} {release['version']} installs when this run ends")
+            self.update_waiting = release
+            return
+        self.updating = True
+        self.update_waiting = None
+        from macro import update
+
+        def work():
+            try:
+                shown = [-1]
+
+                def progress(share):
+                    step = int(share * 10)
+                    if step != shown[0]:
+                        shown[0] = step
+                        self.bridge.update.emit("downloading", release, f"Downloading {release['version']}: {step * 10}%")
+                folder = update.download(release, progress)
+                kept = update.keep_players_files(folder)
+                if kept:
+                    self.bridge.log.emit(f"update keeps your own {len(kept)} files: " + ", ".join(kept[:8])
+                                         + (" ..." if len(kept) > 8 else ""))
+                self.bridge.update.emit("ready", release, folder)
+            except Exception as error:  # noqa: BLE001 (any failure: the app carries on as it is)
+                self.bridge.update.emit("failed", release, str(error) or type(error).__name__)
+        threading.Thread(target=work, daemon=True).start()
+
     def run_finished(self, ending):
+        if self.update_waiting is not None:
+            QTimer.singleShot(3000, lambda: self.update_waiting and self.install_update(self.update_waiting))
         self.log(f"run {ending}")
         self.run_started = None
         self.chain.set_finished(bool(self.runner and self.runner.stats.finished))

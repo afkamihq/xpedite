@@ -6,9 +6,9 @@ import subprocess
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QStandardItem, QStandardItemModel
-from PyQt6.QtWidgets import (QAbstractItemView, QComboBox, QDoubleSpinBox, QGridLayout, QLabel,
-                             QHBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QSpinBox, QVBoxLayout,
-                             QWidget)
+from PyQt6.QtWidgets import (QAbstractItemView, QComboBox, QDoubleSpinBox, QFrame, QGridLayout, QLabel,
+                             QHBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QScrollArea, QSpinBox,
+                             QVBoxLayout, QWidget)
 
 from macro.control import plans
 from macro.platform import links
@@ -23,11 +23,11 @@ SETTINGS_FILE = os.path.join(ROOT, "data", "settings.yaml")
 UNSUPPORTED_MAPS = {}
 MODES = (("Story", "story", True), ("Sandbox test", "sandbox", True), ("Story Infinite", None, False),
          ("Story Mastery", None, False), ("Raid", None, False), ("Challenge", "challenge", True), ("Boss Rush", None, False),
-         ("Expedition", None, False), ("Tower", None, False), ("Soul Furnace", "furnace", True),
+         ("Expedition", "expedition", True), ("Tower", None, False), ("Soul Furnace", "furnace", True),
          ("Demonic Rift", None, False), ("The Ancient One", None, False), ("Trick or Treat", "trick", True))
 DEFAULTS = {"collect": True, "webhook": "", "ping": "", "send_victory": True, "send_defeat": True, "send_end": True,
             "may_restart": True, "resume_idle": 2.0, "auto_resume": 3.0, "attach_on_launch": True,
-            "live_glass": True, "repeat_queue": False,
+            "live_glass": True, "repeat_queue": False, "auto_update": True,
             "upgrades": "plan", "refresh_hours": 1.0, "private_server": "", "fresh_start": True,
             "stop_at_time": "", "stop_at_candy": 0, "shutdown_when_done": False,
             "discord_token": "", "discord_app_id": "", "discord_channel": "", "discord_guild": "",
@@ -87,6 +87,7 @@ class TasksWindow(SubWindow):
         adding.setFixedWidth(300)
         row.addWidget(adding)
         row.addWidget(self._souls_card())
+        row.addWidget(self._expedition_card())
 
         self.items = QListWidget()
         self.items.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
@@ -111,6 +112,8 @@ class TasksWindow(SubWindow):
         self.body_box.addLayout(row, 1)
 
         self.map.currentIndexChanged.connect(self.refresh_plans)
+        self.difficulty.currentIndexChanged.connect(
+            lambda *a: self.exp_load_rule() if self.mode.currentData() == "expedition" else None)
         self.mode.currentIndexChanged.connect(self.mode_changed)
         for entry in load_yaml(QUEUE_FILE, []):
             self._append(entry)
@@ -181,6 +184,186 @@ class TasksWindow(SubWindow):
         card.setVisible(False)
         return card
 
+    # ------------------------------------------------------------------ Expedition
+    def _expedition_card(self):
+        """Expedition settings: the reroll minimums for the map and difficulty picked on the left,
+        then how runs are played (data/expedition.yaml). A minimum of 0 is off."""
+        from macro.modes import expedition
+        self._exp = expedition.load_settings()
+        self.exp_reroll = ToggleRow("Reroll until a route qualifies")
+        self.exp_match = QComboBox()
+        self.exp_match.addItems(["All of them", "Any one of them"])
+        self.exp_max = number(0, 9999, width=70)
+        self.exp_none = QComboBox()
+        self.exp_none.addItems(["Play the best seen", "Play the current one", "Skip to the next task", "Stop"])
+        self.exp_capped = ToggleRow("Capped items count as 0")
+        self.exp_min = {}
+        for name in expedition.RESOURCES:
+            box = number(0, 1_000_000, special="off", width=80)
+            self.exp_min[name] = box
+        self.exp_hire = ToggleRow("Hire units at checkpoints")
+        self.exp_hire_max = number(0, 4, width=70)
+        self.exp_tomes = ToggleRow("Tomes: Unbound for units, Investor for farms")
+        self.exp_tomes_own = ToggleRow("Tomes on my own units (for good)")
+        self.exp_tomes_own.setToolTip("A tome used in an Expedition changes the unit's trait permanently. "
+                                      "Off: tomes only go on units hired in the run.")
+        self.exp_upgrades = QComboBox()
+        self.exp_upgrades.addItems(["Auto Upgrade, farms first", "The macro clicks upgrades"])
+        self.exp_anvils = ToggleRow("Anvils at every shop")
+        self.exp_bank = number(0, 200000, 1000, special="spend it all", width=90)
+        self.exp_repair = number(0, 2000, 50, special="never", width=70)
+        self.exp_hero = ToggleRow("Barter with The Hero (500 Yen)")
+        self.exp_extract = QComboBox()
+        self.exp_extract.addItems(["Never", "Payload HP below", "After N nodes"])
+        self.exp_extract_at = number(0, 5000, width=70)
+        self.exp_levelups = QLineEdit()
+        self.exp_levelups.setPlaceholderText("Fortified Cargo, Yen Hunger, ...")
+        self.exp_levelups.setFixedWidth(170)
+        self.exp_anvil_cards = QLineEdit()
+        self.exp_anvil_cards.setPlaceholderText("Bonus Match, Critical Chance, ...")
+        self.exp_anvil_cards.setToolTip("Stat Anvil cards, first wanted first. Every card the macro sees is "
+                                        "listed in data/expedition/anvil_cards.yaml.")
+        self.exp_anvil_cards.setFixedWidth(170)
+        self.exp_title = label("", "muted", wrap=False)
+
+        inner = QWidget()
+        box = QVBoxLayout(inner)
+        box.setContentsMargins(0, 0, 6, 0)
+        box.setSpacing(0)
+        for widget in (self.exp_title, self.exp_reroll, SettingRow("Need", self.exp_match),
+                       SettingRow("Max rerolls", self.exp_max), SettingRow("When none qualifies", self.exp_none),
+                       self.exp_capped):
+            box.addWidget(widget)
+        box.addSpacing(6)
+        box.addWidget(label("Minimums on the route, at the start and at each checkpoint", "muted", wrap=False))
+        self.exp_route_check = ToggleRow("Extract when the rest falls short")
+        box.addWidget(self.exp_route_check)
+        # The map's own material and Fuel Cells first (user: the materials and the blue Fuel Cells
+        # are what an Expedition is farmed for); the other maps' materials are hidden.
+        materials = set(expedition.MATERIAL.values())
+        order = ["Fuel Cell"] + [r for r in expedition.RESOURCES if r != "Fuel Cell"]
+        self.exp_min_rows = {}
+        for name in sorted(order, key=lambda r: (r not in materials, order.index(r))):
+            row = SettingRow(name, self.exp_min[name])
+            self.exp_min_rows[name] = row
+            box.addWidget(row)
+        box.addSpacing(6)
+        box.addWidget(label("Every Expedition", "muted", wrap=False))
+        for widget in (SettingRow("Upgrades", self.exp_upgrades), self.exp_anvils,
+                       SettingRow("Yen kept for the shop", self.exp_bank),
+                       self.exp_hire, SettingRow("Hires per run", self.exp_hire_max), self.exp_tomes,
+                       self.exp_tomes_own,
+                       SettingRow("Repair Hammer below HP", self.exp_repair), self.exp_hero,
+                       SettingRow("Extract", self.exp_extract), SettingRow("Extract at", self.exp_extract_at),
+                       SettingRow("Level-up cards", self.exp_levelups),
+                       SettingRow("Anvil cards", self.exp_anvil_cards)):
+            box.addWidget(widget)
+        box.addStretch(1)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        inner.setObjectName("expInner")
+        scroll.setStyleSheet("QScrollArea { background: transparent; } #expInner { background: transparent; }")
+        scroll.viewport().setAutoFillBackground(False)
+        scroll.setWidget(inner)
+        card = Card("Expedition", icon_name="config", spacing=0)
+        card.setFixedWidth(360)
+        card.add(scroll, 1)
+
+        g = self._exp
+        self.exp_hire.setChecked(bool(g["hire"].get("on")))
+        self.exp_hire_max.setValue(int(g["hire"].get("max", 2)))
+        self.exp_tomes.setChecked(bool(g["shop"].get("tomes", True)))
+        self.exp_tomes_own.setChecked(bool(g["shop"].get("tomes_on_own", False)))
+        self.exp_upgrades.setCurrentIndex(0 if g.get("upgrades", "auto") == "auto" else 1)
+        self.exp_anvils.setChecked(bool(g["shop"].get("anvils", True)))
+        self.exp_bank.setValue(int(g["shop"].get("keep_for_shop", 10000)))
+        self.exp_repair.setValue(int(g["shop"].get("repair_below", 0)))
+        self.exp_hero.setChecked((g.get("encounters") or {}).get("The Hero", "barter") == "barter")
+        self.exp_extract.setCurrentIndex({"never": 0, "hp_below": 1, "after_nodes": 2}.get(g["extract"].get("rule"), 0))
+        self.exp_extract_at.setValue(int(g["extract"].get("hp_below" if g["extract"].get("rule") != "after_nodes" else "after_nodes", 0)))
+        self.exp_levelups.setText(", ".join(g.get("levelup_priority") or []))
+        self.exp_route_check.setChecked(bool(g["extract"].get("route_check", True)))
+        self.exp_levelups.setCursorPosition(0)
+        self.exp_anvil_cards.setText(", ".join(g.get("anvil_priority") or []))
+        self.exp_anvil_cards.setCursorPosition(0)
+        self._exp_key = None
+        self.exp_load_rule()
+        for switch in (self.exp_reroll, self.exp_capped, self.exp_hire, self.exp_tomes, self.exp_tomes_own,
+                       self.exp_hero, self.exp_anvils,
+                       self.exp_route_check):
+            switch.toggled.connect(self.save_expedition)
+        for combo in (self.exp_match, self.exp_none, self.exp_extract, self.exp_upgrades):
+            combo.currentIndexChanged.connect(self.save_expedition)
+        for spin in [self.exp_max, self.exp_hire_max, self.exp_repair, self.exp_extract_at, self.exp_bank,
+                     *self.exp_min.values()]:
+            spin.valueChanged.connect(self.save_expedition)
+        self.exp_levelups.editingFinished.connect(self.save_expedition)
+        self.exp_anvil_cards.editingFinished.connect(self.save_expedition)
+        self.expedition_card = card
+        card.setVisible(False)
+        return card
+
+    def _exp_stage(self):
+        name = self.map.currentData() or "School Grounds"
+        try:
+            difficulty = int(self.difficulty.currentText() or 1)
+        except ValueError:
+            difficulty = 1
+        return name, difficulty
+
+    def exp_load_rule(self):
+        """Show the reroll rule of the map and difficulty picked on the left."""
+        from macro.modes import expedition
+        name, difficulty = self._exp_stage()
+        if name not in expedition.MAPS:
+            return
+        self._exp_key = None  # no saving while the boxes are filled
+        for res, row in self.exp_min_rows.items():
+            show_row(row, res not in expedition.MATERIAL.values() or res == expedition.MATERIAL[name])
+        rule = expedition.rule_for(self._exp, name, difficulty)
+        self.exp_title.setText(f"{name}, difficulty {difficulty}")
+        self.exp_reroll.setChecked(bool(rule.get("reroll", True)))
+        self.exp_match.setCurrentIndex(0 if rule.get("match", "all") == "all" else 1)
+        self.exp_max.setValue(int(rule.get("max_rerolls", 50)))
+        self.exp_none.setCurrentIndex(["best", "current", "skip", "stop"].index(rule.get("when_none", "best")))
+        self.exp_capped.setChecked(bool(rule.get("capped_counts_zero", True)))
+        for res, box in self.exp_min.items():
+            m = rule["minimums"].get(res) or {}
+            box.setValue(int(m.get("min", 0)) if m.get("on") else 0)
+        self._exp_key = f"{name}|{difficulty}"
+
+    def save_expedition(self, *args):
+        from macro.modes import expedition
+        g = self._exp
+        if self._exp_key:
+            g.setdefault("maps", {})[self._exp_key] = {
+                "reroll": self.exp_reroll.isChecked(),
+                "match": "all" if self.exp_match.currentIndex() == 0 else "any",
+                "max_rerolls": self.exp_max.value(),
+                "when_none": ["best", "current", "skip", "stop"][self.exp_none.currentIndex()],
+                "capped_counts_zero": self.exp_capped.isChecked(),
+                "minimums": {res: {"on": box.value() > 0, "min": box.value()}
+                             for res, box in self.exp_min.items() if box.value() > 0},
+            }
+        g["hire"] = {**g.get("hire", {}), "on": self.exp_hire.isChecked(), "max": self.exp_hire_max.value()}
+        g["shop"] = {**g.get("shop", {}), "tomes": self.exp_tomes.isChecked(), "repair_below": self.exp_repair.value(),
+                     "anvils": self.exp_anvils.isChecked(), "keep_for_shop": self.exp_bank.value(),
+                     "tomes_on_own": self.exp_tomes_own.isChecked()}
+        g["upgrades"] = "auto" if self.exp_upgrades.currentIndex() == 0 else "manual"
+        g.setdefault("encounters", {})["The Hero"] = "barter" if self.exp_hero.isChecked() else "leave"
+        rule = ["never", "hp_below", "after_nodes"][self.exp_extract.currentIndex()]
+        g["extract"] = {**g.get("extract", {}), "rule": rule, "route_check": self.exp_route_check.isChecked()}
+        if rule != "never":
+            g["extract"][rule] = self.exp_extract_at.value()
+        g["levelup_priority"] = [n.strip() for n in self.exp_levelups.text().split(",") if n.strip()]
+        g["anvil_priority"] = [n.strip() for n in self.exp_anvil_cards.text().split(",") if n.strip()]
+        try:
+            expedition.save_settings(g)
+        except OSError as error:
+            self.main.toast(f"Couldn't save the Expedition settings: {error}", "warn")
+
     def _boss_rows(self, on):
         show_row(self.save_row, on)
         show_row(self.buy_row, on)
@@ -234,6 +417,18 @@ class TasksWindow(SubWindow):
             names = plans.names("soul_furnace") or ["paths"]
             self.plan.addItems(sorted(names, key=lambda n: n != "paths"))
             return
+        if self.mode.currentData() == "expedition":
+            from macro.modes import expedition
+            for name in expedition.MAPS:
+                item = QStandardItem(name)
+                item.setData(name, Qt.ItemDataRole.UserRole)
+                model.appendRow(item)
+            self.map.setModel(model)
+            self.map.setCurrentIndex(max(0, self.map.findData(keep)))
+            self.plan.clear()
+            self.plan.addItem("tail")
+            self.exp_load_rule()
+            return
         if self.mode.currentData() == "challenge":
             # The stage is read from the Challenges window when it's played: the choice here is
             # which tab, and the macro takes the offer it has a plan for, Trait Crystals first.
@@ -259,6 +454,9 @@ class TasksWindow(SubWindow):
         self.refresh_plans()
 
     def refresh_plans(self):
+        if self.mode.currentData() == "expedition":
+            self.exp_load_rule()
+            return
         if self.mode.currentData() in ("furnace", "trick", "challenge"):
             return
         name = self.map.currentData()
@@ -272,9 +470,16 @@ class TasksWindow(SubWindow):
     def mode_changed(self):
         mode = self.mode.currentData()
         self.souls_card.setVisible(mode == "furnace")
+        self.expedition_card.setVisible(mode == "expedition")
+        wanted = ["1", "2", "3"] if mode == "expedition" else ["Normal", "Hard"]
+        if [self.difficulty.itemText(i) for i in range(self.difficulty.count())] != wanted:
+            self.difficulty.blockSignals(True)
+            self.difficulty.clear()
+            self.difficulty.addItems(wanted)
+            self.difficulty.blockSignals(False)
         show_row(self.task_rows["Act"], mode == "story")
-        show_row(self.task_rows["Difficulty"], mode == "story")
-        show_row(self.task_rows["Plan"], mode not in ("challenge", "trick"))
+        show_row(self.task_rows["Difficulty"], mode in ("story", "expedition"))
+        show_row(self.task_rows["Plan"], mode not in ("challenge", "trick", "expedition"))
         self.task_rows["Map"].findChild(QLabel).setText({"challenge": "Tab", "furnace": "Stage",
                                                           "trick": "Where"}.get(mode, "Map"))
         self.refresh_maps()
@@ -286,6 +491,9 @@ class TasksWindow(SubWindow):
         entry = {"mode": self.mode.currentData(), "map": self.map.currentData(), "act": self.act.value(),
                  "difficulty": self.difficulty.currentText(), "plan": self.plan.currentText() or "story",
                  "times": 0 if self.forever.isChecked() else self.times.value()}
+        if entry["mode"] == "expedition":
+            entry["difficulty"] = int(entry["difficulty"])
+            entry.pop("act")
         self._append(entry)
         self.save()
 
@@ -365,9 +573,10 @@ class ConfigWindow(SubWindow):
         self.collect = ToggleRow("Collect rewards after matches")
         self.auto_upgrades = ToggleRow("Game's own Auto Upgrade")
         self.live_glass = ToggleRow("Glass lit by the game")
+        self.auto_update = ToggleRow("Update by itself")
         run = Card("Run", icon_name="play", spacing=0)
         rows(run, self.attach_on_launch, self.fresh_start, self.may_restart, self.repeat_queue, self.collect,
-             self.auto_upgrades, self.live_glass)
+             self.auto_upgrades, self.live_glass, self.auto_update)
 
         self.auto_resume = spin(0, 600, 1.0, " s", "off")
         self.resume_idle = spin(0.5, 30.0, 0.5, " s")
@@ -445,6 +654,7 @@ class ConfigWindow(SubWindow):
         self.collect.setChecked(s["collect"])
         self.may_restart.setChecked(s["may_restart"])
         self.live_glass.setChecked(s["live_glass"])
+        self.auto_update.setChecked(bool(s.get("auto_update", True)))
         self.repeat_queue.setChecked(s["repeat_queue"])
         self.fresh_start.setChecked(bool(s.get("fresh_start", True)))
         self.auto_upgrades.setChecked(s["upgrades"] == "auto")
@@ -463,7 +673,7 @@ class ConfigWindow(SubWindow):
         self.send_end.setChecked(s["send_end"])
         for box in (self.attach_on_launch, self.collect, self.may_restart, self.live_glass, self.repeat_queue,
                     self.fresh_start, self.auto_upgrades, self.send_victory, self.send_defeat, self.send_end,
-                    self.shutdown_when_done):
+                    self.shutdown_when_done, self.auto_update):
             box.toggled.connect(self.save)
         self.discord_summary.setValue(float(s.get("discord_summary_hours", DEFAULTS["discord_summary_hours"]) or 0))
         for box in (self.resume_idle, self.auto_resume, self.refresh_hours, self.stop_at_candy, self.discord_summary):
@@ -485,6 +695,7 @@ class ConfigWindow(SubWindow):
                          "resume_idle": self.resume_idle.value(), "auto_resume": self.auto_resume.value(),
                          "attach_on_launch": self.attach_on_launch.isChecked(),
                          "live_glass": self.live_glass.isChecked(), "repeat_queue": self.repeat_queue.isChecked(),
+                         "auto_update": self.auto_update.isChecked(),
                          "upgrades": "auto" if self.auto_upgrades.isChecked() else "plan",
                          "refresh_hours": self.refresh_hours.value(),
                          "private_server": self.private_server.text().strip(),
@@ -550,14 +761,42 @@ class AboutWindow(SubWindow):
         works = Card("Plays", icon_name="check")
         chips = QHBoxLayout()
         chips.setSpacing(6)
-        for name in ("Soul Furnace", "Story", "Trick or Treat", "Challenges", "Sandbox"):
+        for name in ("Expeditions", "Soul Furnace", "Story", "Challenges", "Trick or Treat"):
             chip = label(name, "chip", wrap=False)
             chips.addWidget(chip)
         chips.addStretch(1)
         works.add(chips)
         self.body_box.addWidget(works)
+        self.update_button = QPushButton("Check now")
+        self.update_button.clicked.connect(self._update_clicked)
+        updates = Card("Updates", icon_name="sync", spacing=0, extra=self.update_button)
+        self.update_note = label("Not checked yet", "muted")
+        updates.add(self.update_note)
+        self.body_box.addWidget(updates)
+        self.main_window = main
+        self._release = None
         logs = NavButton("logs", "Something went wrong?", "The logs say what it saw and did")
         logs.setFixedHeight(60)
         logs.clicked.connect(lambda: open_folder("logs"))
         self.body_box.addWidget(logs)
         self.fit = True
+
+    def show_update(self, state: str, release: dict | None, detail: str = "") -> None:
+        """The Updates card: what the last check found (macro/update.py's states)."""
+        self._release = release if state == "available" else None
+        text = {"development": "A development copy: it updates through git.",
+                "offline": "Couldn't reach GitHub. It tries again later.",
+                "current": "Up to date.",
+                "available": f"Version {release['version'] if release else '?'} is out." if release else "",
+                "downloading": detail or "Downloading the update...",
+                "failed": f"The update didn't install: {detail}"}.get(state, detail)
+        self.update_note.setText(text)
+        self.update_button.setText(f"Install {release['version']}" if self._release else "Check now")
+        self.update_button.setEnabled(state != "downloading")
+
+    def _update_clicked(self):
+        if self._release:
+            self.main_window.install_update(self._release)
+        else:
+            self.update_note.setText("Checking...")
+            self.main_window.check_updates(manual=True)

@@ -13,16 +13,30 @@
 # So the 8th Sword comes after the Atoms.
 # 12 Nov 2026: Black Heart (Revived) replaced Sovereign (user); it's top-tier and cheap, so it comes
 # right after the Atoms. A unit not named here falls back to its role (farm, dps, support).
+# 13 Nov 2026: Wolf (Revived) (Starrk, evolved, Unbound trait: one placement) replaced First Blade
+# (Unohana, user) in hotbar slot 3; Black Heart stays in slot 4. The first plan for it (22:45)
+# took Starrk for Black Heart: slot 3 got Starrk on the bottom path's first bend (its other two
+# spots refused, "placement limit"), one Black Heart and the 4th Teacher by the furnace, and still
+# made wave 65, +2,246. This plan keeps those and puts the other two Black Hearts back on the
+# upper-left and right paths. Starrk's upgrades are dear (UPG 10 is 15,000 Yen) and it's the
+# strongest damage: right after the Atoms, then Black Heart.
+# 15 Nov 2026: Black Heart is Unbound now (user): one placement. The plan still had three, so the
+# one built went on the upper-left path's S-bend, the other two were refused ("placement limit"),
+# and five runs in a row lost at wave 9 with ~290 enemies up. Its one spot is by the furnace again,
+# where every path ends (the 13 Nov plan that made wave 65); it's no longer in unbound_more.
 priorities:
   alchemist: 1
   atom: 2
-  blackheart: 3
-  8thsword: 4
-  blade: 5
+  wolf: 3
+  blackheart: 4
+  8thsword: 5
   teacher: 6
-# Order (11 Nov 2026): economy first (the three Stone Alchemists), the 8th Sword at the furnace
-# where every path ends, then an Atom on each path (much stronger than Sovereign, user), the
-# Teachers beside them, First Blades, and the Sovereigns last. Walks: home, down, north, down, north.
+# 15 Nov 2026: Atom and Black Heart are both Unbound now (one placement each); the plan for three
+# Atoms on three paths built one, on the bottom path, and every run lost at wave 9-11 (76 kills).
+# Both go by the furnace, where every path ends (one Black Heart there made wave 65 on 13 Nov), and
+# the four Teachers (they buff Magical units in range, as both are) around them. Order: the three
+# Stone Alchemists, the 8th Sword and the Atom at the furnace, two Teachers, Starrk on the bottom
+# path's first bend, Black Heart, the last two Teachers. Walks: home, down, home. 11 phantoms.
 views:
   down: soul_furnace_down
   north: soul_furnace_rightup
@@ -31,18 +45,13 @@ steps:
   - {view: home, place: 6, at: [540, 610]}
   - {view: home, place: 6, at: [590, 610]}
   - {view: home, place: 2, at: [740, 460]}      # 8th Sword at the furnace: every path's end
-  - {view: down, place: 1, at: [740, 360]}      # Atom: bottom path's climb to the furnace
-  - {view: north, place: 1, at: [190, 410]}     # Atom: upper-left path's loop
-  - {view: north, place: 1, at: [1140, 410]}    # Atom: right path's upper zig-zag
-  - {view: north, place: 5, at: [190, 460]}     # Teacher beside the upper-left Atom
-  - {view: north, place: 5, at: [1140, 460]}    # Teacher beside the right Atom
-  - {view: down, place: 5, at: [690, 360]}      # Teacher beside the bottom Atom
-  - {view: down, place: 3, at: [990, 510]}      # First Blade: bottom path's first bend
-  - {view: down, place: 4, at: [790, 560]}      # Sovereign: bottom path's double bend
-  - {view: north, place: 3, at: [1240, 160]}    # First Blade: right path, further up
-  - {view: north, place: 3, at: [240, 360]}     # First Blade: upper-left loop
-  - {view: north, place: 4, at: [390, 560]}     # Sovereign: upper-left path's S-bend by the furnace
-  - {view: north, place: 4, at: [1040, 560]}    # Sovereign: right path's lower zig-zag
+  - {view: home, place: 1, at: [790, 510]}      # Atom (Unbound, one) by the furnace, over the bottom path's end
+  - {view: home, place: 5, at: [700, 520]}      # Teacher beside the Atom
+  - {view: home, place: 5, at: [880, 510]}      # Teacher on the Atom's other side
+  - {view: down, place: 3, at: [990, 510]}      # Starrk: bottom path's first bend (First Blade's spot)
+  - {view: home, place: 4, at: [690, 410]}      # Black Heart (Unbound, one) by the furnace: all paths' ends
+  - {view: home, place: 5, at: [640, 360]}      # Teacher by Black Heart
+  - {view: home, place: 5, at: [620, 440]}      # Teacher between Black Heart and the 8th Sword
 
 # Where the Souls go once SPA Boost is maxed (user's plan, 11 Nov 2026; macro/modes/souls.py), in
 # this order: an Unbound Tome for each of OUR placed units listed here (part of the name -> how
@@ -54,7 +63,7 @@ steps:
 # and earn +20% Candy Corn and 100 bonus Candy Corn" (wiki), bought when the health drops to
 # final_boss_health.
 souls:
-  unbound: {atom: 3}
+  unbound: {}  # Atom is Unbound already (15 Nov 2026)
   unbound_new: [wolf, atom, impaler, reaper]
   extra_units: true
   extra_priority: 3
@@ -65,6 +74,7 @@ souls:
   final_boss_save_from: 44
   final_boss_wave: 60
   final_boss_enemies: 255
-  unbound_more: {blackheart: 3, blade: 3}
+  unbound_more: {}
   boosts_from_candy: 2000
   boosts_from_wave: 45
+  extra_spots: [[840, 360], [950, 440], [930, 300], [760, 320], [1040, 330], [880, 560], [980, 500], [680, 290], [1060, 420]]

@@ -52,7 +52,10 @@ print("     Roblox running:", w.WindowsPlatform().game_running())
 # -------------------------------------------------------------------- capture
 with w.WindowsPlatform() as p:
     frame = p.grab()
-    check("capture is 1920x1080", frame.shape == (1080, 1920, 3), frame.shape)
+    # The capture is the game's picture: the docked frame from data/display.yaml, or the
+    # whole 1920x1080 screen when there's no frame.
+    want_h, want_w = (w.FRAME[3], w.FRAME[2]) if w.FRAME else (1080, 1920)
+    check(f"capture is {want_w}x{want_h}", frame.shape == (want_h, want_w, 3), frame.shape)
     check("capture isn't black", frame.std() > 1, f"std {frame.std():.1f}")
     times = []
     for _ in range(30):

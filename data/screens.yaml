@@ -212,6 +212,7 @@ screens:
     frames: [win/expedition, linux/expedition]
     buttons:
       back: [196, 1028]
+      select_stage: [603, 1028]  # 15 Nov 2026, the picker's green button (452, 771 in the frame)
   tower:
     frames: [win/tower, linux/tower]
     buttons:

@@ -60,6 +60,13 @@ def on_finished(ending: str):
     text = str(ending)
     if text == "stopped" or text.startswith("finished") or "STOPPED BECAUSE" in text:
         return  # the user's stop, a goal reached or the queue done, or the spending safety stop
+    if "ACCOUNT IN USE" in text:
+        # Someone is playing on the farm's Roblox account (Error 273): starting again would throw
+        # them out of their game, so it waits for a person (13 Nov 2026).
+        window.bridge.log.emit("the Roblox account is being played somewhere else: not starting again by itself")
+        tell("The farm stopped: its Roblox account joined a game somewhere else (Error 273), so it "
+             "left that game alone. Use /start when you're done playing.", ping=True)
+        return
     now = time.time()
     restarts[:] = [t for t in restarts if now - t < 3600]
     if len(restarts) >= MAX_RESTARTS_AN_HOUR:

@@ -65,12 +65,13 @@
 | | Mode | |
 |:-:|---|---|
 | <img src="https://img.shields.io/badge/farming-ff9a3c?style=flat-square" alt="farming"> | **Soul Furnace** <sub>Halloween event · Infinite · Hard</sub> | Phantoms placed before the start, Auto Upgrade and priorities on every card, SPA boosts, Unbound Tomes, Random Units, DMG/RNG for the late game |
+| <img src="https://img.shields.io/badge/farming-ff9a3c?style=flat-square" alt="farming"> | **Expeditions** <sub>4 maps · difficulty 1-3</sub> | Rerolls until the route carries your minimum of the map's material and Fuel Cells, puts units on the payload's tail, Auto Upgrade with farms first, Anvils and Unbound/Investor tomes at the shop, hires, encounters, and extracts when the rest of the route falls short |
 | <img src="https://img.shields.io/badge/wins-3b8a5a?style=flat-square" alt="wins"> | **Story** <sub>Normal</sub> | School Grounds act 1; Crimson Shore and Flaming Monastery acts 1 to 5 |
 | <img src="https://img.shields.io/badge/plays-3b8a5a?style=flat-square" alt="plays"> | **Trick or Treat** | The lobby's doors, and the Tricks with your team |
 | <img src="https://img.shields.io/badge/early-5c6474?style=flat-square" alt="early"> | **Challenges** | Takes the offer it has a plan for, Trait Crystals first |
 | <img src="https://img.shields.io/badge/free-5c6474?style=flat-square" alt="free"> | **Sandbox** | Try any plan before using it for real |
 
-Every strategy is a setting, not code. You draw your placements on a picture of each map in **Main**, and the Soul Furnace plan (what Souls buy, in what order, from which wave) lives in **Tasks**. Your team is a preset, so any team works.
+Every strategy is a setting, not code. You draw your placements on a picture of each map in **Main** (for Expeditions, a picture of the payload), and the Soul Furnace plan and each Expedition map's minimums live in **Tasks**. Your team is a preset, so any team works.
 
 ## How it works
 
@@ -96,7 +97,16 @@ It never reads or changes Roblox's memory, and it never spends Robux, gems or an
 
 ## Install
 
-You need Windows 10 or 11, a screen of 1920 × 1080 or more (the game is docked at 1440 × 810), Roblox signed in, and [uv](https://docs.astral.sh/uv/) for Python.
+You need Windows 10 or 11, a screen of 1920 × 1080 or more (the game is docked at 1440 × 810) and Roblox signed in. Any frame-rate cap works, down to Roblox's lowest.
+
+1. From [**Releases**](https://github.com/afkamihq/xpedite/releases/latest), download **`xpedite-<version>-windows.zip`**.
+2. Unzip it anywhere (a folder of its own, not Program Files) and open **`xpedite.exe`**. No Python needed.
+3. It **updates itself**: it looks for a new version when it opens and every few hours, and installs it when nothing is running (your settings, team and placements are kept). Turn that off in Config, or check by hand in About.
+
+<details>
+<summary>From the source instead</summary>
+
+Download `xpedite-<version>-source.zip`, unzip it and run **`setup.bat`** once: it installs [uv](https://docs.astral.sh/uv/), Python 3.13 and the packages, then opens xpedite. After that, **`xpedite.bat`** opens it. By hand:
 
 ```bat
 uv venv .venv-win --python 3.13
@@ -104,7 +114,9 @@ uv pip install --python .venv-win\Scripts\python.exe -r requirements.txt
 xpedite.bat
 ```
 
-The first start opens **Setup**, which checks your PC and the game's settings (xpedite plays at the game's lowest graphics, which every reference picture is taken at). Pick what to play in **Tasks** and press **Start**, or F2. F8 stops everything.
+</details>
+
+The first start opens **Setup**: it checks your PC and the game's settings (xpedite plays at the game's lowest graphics, which every reference picture is taken at), reads your team, and its **Quick start** takes your private server link and adds an Expedition in three picks (map, difficulty, what to reroll for). Pick anything else in **Tasks** and press **Start**, or F2. F8 stops everything.
 
 <details>
 <summary><b>Farming in a second Windows account</b></summary>

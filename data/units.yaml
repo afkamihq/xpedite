@@ -91,6 +91,11 @@ units:
     archetype: Magical
     limit: 1
     note: "Evolves to Wolf (Revived), a top DPS (infinite-range 5th hit, Soul Wolves), with Wolven Blades: 400 Demonic Rift Coins in the Demonic Rift Shop. Unbound here (10 Nov 2026), so one placement. Out of the team from 11 Nov 2026 (user), though its panel reads 10.6k damage / 1.4 s, the strongest unit owned."
+  Wolf (Revived):
+    role: dps
+    archetype: Magical
+    limit: 1
+    note: "Starrk, evolved from Wolf (wiki: limit 2, Magical/Hydro, placed for 2,000 Yen, range 20 to 30, UPG 10 at 15,000). Every attack is Phantom Fury (line, 5 hits) and speeds the next by 50%; the 5th gets +100% damage, +50% AoE and infinite range and spawns 2 Soul Wolves (Mana Burn). UPG 10 unlocks Zero Machine Gun (auto, once). Unbound trait here, so one placement. In the team from 13 Nov 2026 (user), in First Blade's slot 3."
   Elf Mage (Unleashed):
     role: dps
     archetype: Magical

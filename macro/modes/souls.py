@@ -57,13 +57,17 @@ def slot_of_x(x: float) -> int:
     return min(SLOT_X, key=lambda s: abs(SLOT_X[s] - x))
 
 
-def lit_slots(frame) -> set[int]:
-    out = set()
+def slot_brightness(frame) -> dict[int, float]:
+    """Each hotbar slot's median brightness (HSV value): what lit_slots compares to SLOT_LIT."""
+    out = {}
     for slot, x in SLOT_X.items():
         patch = cv2.cvtColor(frame[700:765, x - 38:x + 38], cv2.COLOR_BGR2HSV)
-        if np.median(patch[:, :, 2]) > SLOT_LIT:
-            out.add(slot)
+        out[slot] = float(np.median(patch[:, :, 2]))
     return out
+
+
+def lit_slots(frame) -> set[int]:
+    return {slot for slot, value in slot_brightness(frame).items() if value > SLOT_LIT}
 
 
 def tome_slots(frame) -> set[int]:
@@ -199,6 +203,7 @@ class Slot:
     tries: int = 0
     spot: tuple | None = None
     bin_fails: int = 0
+    dead: bool = False  # the game refused it ("limit": a second copy of a unit at its limit)
 
 
 @dataclass
@@ -240,6 +245,8 @@ class SoulSpender:
         self.boosts_started_wave: int | None = None
         self.last_buy_fail = 0.0
         self.random_bought = 0
+        self.bought_at: list = []  # when each Random Unit was bought, for spotting one that never came
+        self._late_seen: set = set()
         self.final_boss_bought = False
         self.final_boss_tries = 0
         self.candy: int | None = None
@@ -271,6 +278,10 @@ class SoulSpender:
              health: int | None = None, heat_bars: int | None = None, enemies: int | None = None,
              candy: int | None = None) -> bool:
         now = self.p.now()
+        # Within a run the wave only goes up: one misread (None, or a digit short) dropped the late
+        # game for a tick and switched DMG/RNG off and on again (13 Nov 2026, waves 52-55).
+        self.wave = max(self.wave, wave or 0)
+        wave = self.wave
         if health == 0:
             return False  # the run is over: any click now would close its results
         self.candy = candy if candy is not None else self.candy
@@ -286,7 +297,6 @@ class SoulSpender:
             self.final_boss_tries += 1
             self.final_boss_bought = self.buy_final_boss()
             return True
-        self.wave = wave
         if now < self.blocked_until:
             return False
         # The bin is used only when a purchase needs the room (_make_room): binning every finished
@@ -327,12 +337,14 @@ class SoulSpender:
         from macro.modes import furnace
         if not self._in_match():
             return False
+        wave = max(wave or 0, self.wave)
         # Anything that turned up in the hotbar since the last look: a Random Unit arrives after
         # the Forge's countdown ("Random Unit 0:08  2/5" beside the Forge button), not at once.
         self.p.hover(720, 82)
         new = lit_slots(self.p.grab()) - set(self.slots)
         if new:
             self.adopt(self.p.grab())
+        self._note_late_unit()
         # 1. a tome bought but not used yet is used first
         if self.tome_waiting:
             return self._use_waiting_tome()
@@ -341,6 +353,13 @@ class SoulSpender:
             unplaced = [s for s, v in self.slots.items() if v.kind == "extra" and not v.placed and v.tries < 3]
             if unplaced:
                 return self._place_extra(unplaced[0])
+        # 2b. a Random Unit the game refused ("placement limit") is cleared off the hotbar at
+        # once, so its slot takes the next one (user, 13 Nov 2026: three of five were refused
+        # in one run, their cards sat there and the fifth never got a slot).
+        refused = [s for s, v in sorted(self.slots.items()) if v.dead and v.bin_fails < 3]
+        if refused:
+            self.bin_slot(refused[0])
+            return True
         souls = souls or 0
         if self.config.final_boss and not self.final_boss_bought and wave >= self.config.final_boss_save_from:
             if not self._saving_logged:
@@ -431,9 +450,11 @@ class SoulSpender:
         return False
 
     def _binnable(self) -> list[int]:
+        dead = [s for s, v in sorted(self.slots.items()) if v.dead and v.bin_fails < 3]
         ours = [s for s, v in sorted(self.slots.items()) if v.kind == "ours" and v.bin_fails < 3]
-        extras = [s for s, v in sorted(self.slots.items()) if v.kind == "extra" and v.placed and v.bin_fails < 3]
-        return ours + extras
+        extras = [s for s, v in sorted(self.slots.items())
+                  if v.kind == "extra" and v.placed and not v.dead and v.bin_fails < 3]
+        return dead + ours + extras
 
     def bin_slot(self, slot: int) -> bool:
         """Drag a hotbar slot onto the bin right of slot 10. Only the hotbar entry goes: the
@@ -483,6 +504,13 @@ class SoulSpender:
         return gone
 
     # ------------------------------------------------------------------ Random Units
+    def _souls_now(self) -> int | None:
+        """The Souls on the HUD this moment, or None if they can't be read."""
+        from macro.vision.digits import DigitReader
+        reader = getattr(self, "_reader", None) or DigitReader()
+        self._reader = reader
+        return reader.read_hud(self.p.grab()).get("souls")
+
     def _buy_random(self) -> bool:
         from macro.modes import furnace
         p = self.p
@@ -490,29 +518,36 @@ class SoulSpender:
         p.hover(720, 82)
         p.sleep(0.2)
         before = lit_slots(p.grab())
+        # The Forge's Buy is only a click: with under 100 Souls it sells nothing. Read the Souls
+        # now, not from the last tick: two purchases 20 s apart both went by one reading of 108
+        # (13 Nov 2026, 13:54), the second sold nothing, and it was counted, so the run stopped
+        # at "5 bought" with three units.
+        souls_before = self._souls_now()
+        if souls_before is not None and souls_before < RANDOM_PRICE:
+            self.blocked_until = p.now() + 3
+            return False
         if not self.forge.buy("random_unit"):
             self.blocked_until = p.now() + 5
             return True
         p.hover(720, 82)
         p.sleep(0.5)
         frame = p.grab()
-        new = sorted(lit_slots(frame) - before)
-        if not new:
-            # It comes after the Forge's countdown: the next looks at the hotbar adopt it.
-            self.random_bought += 1
-            self.log(f"Random Unit bought ({self.random_bought} this run): it arrives after the Forge's countdown")
+        souls_after = self._souls_now()
+        if souls_before is not None and souls_after is not None and souls_before - souls_after < RANDOM_PRICE * 0.6:
+            self.log(f"the Forge didn't sell a Random Unit (Souls {souls_before} -> {souls_after}): not counted")
             self.blocked_until = p.now() + 3
             return True
-        slot = new[0]
-        if slot in tome_slots(frame):
-            self.log(f"slot {slot} lit after the Random Unit, but it holds a tome")
-            self.slots[slot] = Slot("tome")
-            return True
+        # It always comes after the Forge's countdown. A slot that lights up now is an earlier
+        # purchase arriving: taken as this one's (13 Nov 2026, 12:48) the count of units on their
+        # way went wrong, no room was made, and two of five Random Units never came.
         self.random_bought += 1
-        self.random_arrived += 1
-        self.slots[slot] = Slot("extra")
-        self.log(f"Random Unit bought: hotbar slot {slot}")
-        return self._place_extra(slot)
+        self.bought_at.append(p.now())
+        if lit_slots(frame) - before:
+            self.adopt(frame)
+        self.log(f"Random Unit bought ({self.random_bought} this run, Souls {souls_before} -> {souls_after}): "
+                 f"it arrives after the Forge's countdown")
+        self.blocked_until = p.now() + 3
+        return True
 
     def _place_extra(self, slot: int) -> bool:
         """Place the Random Unit in `slot` on the next spot that takes it. A refused spot is
@@ -534,7 +569,9 @@ class SoulSpender:
             outcome = place_at(p, alignment, slot, spot, self.log)
             if outcome == "limit":
                 entry.placed = True
-                self.log(f"slot {slot}: already placed")
+                entry.dead = True
+                self.log(f"slot {slot}: the game says that unit is at its placement limit (a second copy?): "
+                         f"clearing its card off the hotbar")
                 return True
             if outcome == "refused":
                 self.spot_index += 1
@@ -998,6 +1035,26 @@ class SoulSpender:
         self.log(f"Final Boss bought (Buy at {buy})")
         self.forge.close()
         return True
+
+    def _note_late_unit(self):
+        """A Random Unit bought over a minute ago that hasn't shown up in the hotbar (they come
+        ~25 s after buying): one picture and each slot's brightness, at most three a run. Three of
+        five never showed up on 13 Nov 2026 (18:57-18:59) while the hotbar was really full, so
+        something in slots 8-10 read as empty."""
+        late = self.random_arrived
+        if late >= len(self.bought_at) or late in self._late_seen or len(self._late_seen) >= 3:
+            return
+        waited = self.p.now() - self.bought_at[late]
+        if waited < 60:
+            return
+        self._late_seen.add(late)
+        frame = self.p.grab()
+        values = slot_brightness(frame)
+        known = {s: v.kind + ("/refused" if v.dead else "") for s, v in self.slots.items() if s > 6}
+        self.log(f"Random Unit {late + 1} bought {waited:.0f} s ago hasn't shown up: slot brightness "
+                 + " ".join(f"{s}:{v:.0f}" for s, v in values.items())
+                 + f" (lit above {SLOT_LIT}); the run knows slots {known or 'none'} past 6; picture saved")
+        self._picture(f"late_unit_{late + 1}")
 
     def _picture(self, name: str):
         import os

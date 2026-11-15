@@ -108,10 +108,11 @@ def roblox_checks() -> list[Check]:
     checks.append(Check("Roblox", "Camera not inverted", not inverted, "inverted" if inverted else "normal",
                         "Turn off Invert Camera in Roblox's menu." if inverted else ""))
     try:
+        # Any cap works, down to Roblox's lowest (30): every wait in the macro is on what the
+        # screen shows, not on a frame count (user, 15 Nov 2026: "works at all fps").
         cap = int(values.get("FramerateCap", "0"))
-        fine = cap == 0 or cap >= 60
-        checks.append(Check("Roblox", "Frame rate cap", fine, "no cap" if cap == 0 else f"{cap} fps",
-                            "" if fine else "Set Roblox's frame rate cap to 60 or more."))
+        checks.append(Check("Roblox", "Frame rate cap", True,
+                            "Roblox's default" if cap <= 0 else f"{cap} fps", ""))
     except ValueError:
         pass
     return checks

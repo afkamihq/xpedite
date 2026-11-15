@@ -1,0 +1,62 @@
+# Builds xpedite's downloads on Windows. Every push to main: the zips as a workflow artifact, to try.
+# A version tag (v1.2.0, matching macro/version.py): a GitHub release with both zips, which the
+# app's updater (macro/update.py) finds and installs.
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            packaging/constraints.txt
+
+      - name: Packages
+        run: python -m pip install --ignore-requires-python -r requirements.txt pyinstaller -c packaging/constraints.txt
+
+      - name: Build
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            python packaging/build.py --tag "$GITHUB_REF_NAME"
+          else
+            python packaging/build.py
+          fi
+
+      - name: Try the exe
+        shell: bash
+        run: |
+          cd dist/windows/xpedite
+          ./xpedite.exe -m macro.update --selftest; code=$?
+          cat selftest.txt; rm -f selftest.txt
+          exit $code
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xpedite-zips
+          path: dist/*.zip
+          retention-days: 14
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python packaging/notes.py "$GITHUB_REF_NAME" > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/*.zip --title "xpedite $GITHUB_REF_NAME" --notes-file notes.md

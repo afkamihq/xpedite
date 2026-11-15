@@ -1,0 +1,22 @@
+cards:
+  Element Damage:
+    maps:
+    - School Grounds
+    rarities:
+      Epic:
+      - 3.5
+      - 3.5
+  Follow-Up Damage:
+    maps:
+    - School Grounds
+    rarities:
+      Epic:
+      - 26.0
+      - 26.0
+  Range:
+    maps:
+    - School Grounds
+    rarities:
+      Epic:
+      - 2.6
+      - 2.6

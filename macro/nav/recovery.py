@@ -27,6 +27,11 @@ MONEY_WORDS = ("robux", "purchase", "buy", "premium", "gamepass", "subscribe")
 CANCEL_WORDS = ("cancel", "not now", "no thanks")
 RECONNECT_WORDS = ("reconnect",)
 DISCONNECT_WORDS = ("disconnected", "connection lost", "lost connection", "error code", "reconnect")
+# Roblox's Error 273: the same account joined a game somewhere else (13 Nov 2026: the user's own
+# Roblox, three times). Reconnect would throw that game out in turn, so the run stops instead.
+ACCOUNT_ELSEWHERE_WORDS = ("same account launched", "from different device", "error code: 273",
+                           "error code 273")
+ACCOUNT_ELSEWHERE = "ACCOUNT IN USE"
 # Only ever clicked when the whole line of text is exactly one of these.
 SAFE_CLOSE_WORDS = ("close", "ok", "okay", "continue", "x", "done", "got it", "skip")
 MAX_POPUPS = 5
@@ -51,13 +56,23 @@ def _normal(text: str) -> str:
 
 def plan_for_words(words: list[tuple[str, int, int]]) -> tuple[str, tuple[int, int] | None]:
     """What to do given the text on an unknown screen: (action, where). The action is
-    one of money_stop, reconnect, joining, home, close, none. Pure logic, so it can be tested."""
+    one of money_stop, account_elsewhere, reconnect, joining, home, afk_lobby, close, none. Pure logic, so
+    it can be tested."""
     lines = [(_normal(text), x, y) for text, x, y in words]
+    joined = " ".join(text for text, _, _ in lines)
+    if any(word in joined for word in ACCOUNT_ELSEWHERE_WORDS):
+        return "account_elsewhere", None
     if any(word in text for text, _, _ in lines for word in JOINING_WORDS):
         return "joining", None
     packed = [text.replace(" ", "") for text, _, _ in lines]
     if sum(any(word in text for text in packed) for word in HOME_WORDS) >= 2:
         return "home", None
+    # The AFK Chamber, where the game sends an idle player (15 Nov 2026): its VIP "Buy" and Roblox
+    # Plus "Subscribe" panels are only adverts; Return to Lobby leaves it and buys nothing.
+    if any("afkchamber" in text for text in packed):
+        back = next(((x, y) for (text, x, y), flat in zip(lines, packed) if "returntolobby" in flat), None)
+        if back:
+            return "afk_lobby", back
     if any(word in text for text, _, _ in lines for word in MONEY_WORDS):
         cancel = next(((x, y) for text, x, y in lines if text in CANCEL_WORDS), None)
         return "money_stop", cancel
@@ -151,11 +166,19 @@ class Recovery:
             return True
         if action == "home":
             return self.restart_game("Roblox is on its home page, not in the game")
+        if action == "afk_lobby":
+            self.log("in the AFK Chamber (sent there while idle): Return to Lobby")
+            self.p.click(*where)
+            self.p.sleep(4)
+            return True
         if action == "money_stop":
             if where:
                 self.p.click(*where)
             self.stop("a purchase prompt appeared on an unknown screen, so the run stopped"
                       + (" after cancelling it" if where else ", with no Cancel to press"))
+        if action == "account_elsewhere":
+            self.stop(f"{ACCOUNT_ELSEWHERE}: this Roblox account joined a game somewhere else (Error 273), "
+                      "so the farm stopped without pressing Reconnect, which would end that game")
         if action == "reconnect":
             self.log("disconnected: pressing Reconnect")
             self.p.click(*where)

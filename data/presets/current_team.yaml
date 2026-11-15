@@ -7,12 +7,19 @@
 # every plan's place: 4/5 swapped with it (old ones in cap/plans_before_slot_swap/).
 # 12 Nov 2026 (user): Sovereign (Djinn) -> Black Heart (Revived) in slot 4 (the team before is
 # current_team.before_wolf_blackheart.yaml).
+# 13 Nov 2026 (user): First Blade (Strongest) (Unohana) -> Wolf (Revived) (Starrk, evolved, Unbound
+# trait: one placement) in slot 3, as the hotbar shows (2,000 Yen in slot 3, Black Heart's 700 in
+# slot 4). The team before is in git.
+# 15 Nov 2026 (user): Black Heart (Revived) has the Unbound trait now: one placement (the hotbar
+# shows 1/1). Runs that planned three lost at wave 9.
+# 15 Nov 2026: Atom (Totality) is Unbound too (an Expedition run's Unbound Tome at 18:32; a Bolt
+# Tome had replaced Primordial at 15:38): one placement.
 slots:
   1:
     unit: Atom (Totality)
     cost: 1250
-    limit: 3
-    trait: Primordial
+    limit: 1
+    trait: Unbound
     upgrades:
     - 2850
     - 4150
@@ -24,14 +31,15 @@ slots:
     limit: 1
     trait: Unbound
   3:
-    unit: First Blade (Strongest)
-    cost: 1800
-    limit: 3
-    trait: Forsaken
+    unit: Wolf (Revived)
+    cost: 2000
+    limit: 1
+    trait: Unbound
   4:
     unit: Black Heart (Revived)
     cost: 700
-    limit: 3
+    limit: 1
+    trait: Unbound
   5:
     unit: Forbidden Teacher
     cost: 800

@@ -27,10 +27,11 @@ import privacy  # noqa: E402  (release/privacy.py: names and levels blurred out 
 # Left out: the Linux development helpers (act.py, shot.py, find_setting.py, the Wayland bindings in
 # protocols/ and wlproto/) and RESTART_FARM.bat, kept here only for an old desktop shortcut.
 INCLUDE = ["app/*", "macro/*", "data/*", "tools/*", "scripts/*",
-           "docs/ARCHITECTURE.md", "docs/GAME.md", "docs/WIKI.md", "docs/art/*",
-           "xpedite.bat", "requirements.txt"]
+           "docs/ARCHITECTURE.md", "docs/GAME.md", "docs/WIKI.md", "docs/SECOND_SESSION.md", "docs/art/*",
+           "xpedite.bat", "setup.bat", "requirements.txt", "docs/EXPEDITION.md",
+           "packaging/*", ".github/*", "CHANGELOG.md"]
 EXCLUDE = ["data/settings*.yaml", "data/setup_done", "*/__pycache__/*", "*.pyc",
-           "tools/hide_claude.py", "tools/restart_app_at_result.sh",
+           "tools/hide_claude.py", "tools/restart_app_at_result.sh", "dist/*", "build/*", ".update/*",
            "hub/*", "release/*", "refs/*", "cap/*", "logs/*", "sidekeys/*", ".claude/*",
            "CLAUDE.md", "docs/WINDOWS.md", "PROMPT-original.md", "START-ON-WINDOWS.md"]
 RELEASE_FILES = {"release/README.md": "README.md", "release/LICENSE": "LICENSE", "release/.gitignore": ".gitignore"}

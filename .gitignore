@@ -15,3 +15,9 @@ data/setup_done
 # Screenshots for picking anchors (tools/find_anchors.py); the macro itself needs only
 # data/anchor_patches.npz (tools/build_anchors.py)
 refs/
+
+# Build output and staged updates
+dist/
+build/
+.update/
+manifest.json

@@ -23,7 +23,7 @@ from theme import MUTED, SLOT_COLORS
 from ui import Card, SettingRow, SubWindow, Toggle, ToggleRow, number, rows, to_pixmap
 
 VIEW = 0.75  # the picture is shown at three quarters of its real size; marks are stored full size
-MODES = (("Story", "story", True), ("Sandbox test", "sandbox", True), ("Raid", None, False),
+MODES = (("Story", "story", True), ("Sandbox test", "sandbox", True), ("Expedition", "expedition", True), ("Raid", None, False),
          ("Challenge", None, False), ("Infinite", None, False), ("Boss Rush", None, False))
 
 
@@ -324,7 +324,9 @@ class StrategyWindow(SubWindow):
         self.map.clear()
         sandbox = self.mode.currentData() == "sandbox"
         model = QStandardItemModel(self.map)
-        for name in STORY_MAPS:
+        # Expedition units go on the payload, the same on every map: one picture of it.
+        names = ["Expedition payload"] if self.mode.currentData() == "expedition" else STORY_MAPS
+        for name in names:
             item = QStandardItem(name)
             item.setData(name, Qt.ItemDataRole.UserRole)
             if sandbox and name not in SANDBOX_BUTTONS:
@@ -369,9 +371,11 @@ class StrategyWindow(SubWindow):
         self._picture_key = key
         image = cv2.imread(path)
         self.canvas.set_picture(to_pixmap(image) if image is not None else None)
+        # The Expedition hotbar has ten slots from x 328, the others six from x 502.
+        slot_x = [328 + 87 * k for k in range(10)] if self.folder == "expedition_payload" else SLOT_X
         for slot, button in self.slot_buttons.items():
             if image is not None:
-                x = SLOT_X[slot - 1]
+                x = slot_x[slot - 1]
                 button.setIcon(QIcon(to_pixmap(image[694:770, x - 38:x + 38])))
                 button.setIconSize(QSize(30, 30))
             else:

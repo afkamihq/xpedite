@@ -1,0 +1,5 @@
+# Expedition: the payload seen from the placing camera (set_overhead_camera, then 4 notches in).
+# The camera follows the payload, so these are frame pixels on every map. 15 Nov 2026.
+yaw_counts: 0
+zoom_in_notches: 4
+route: []
