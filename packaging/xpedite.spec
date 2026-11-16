@@ -33,6 +33,18 @@ a = Analysis(
               "PyQt6.QtMultimedia", "PyQt6.QtBluetooth", "PyQt6.QtPdf", "PyQt6.Qt3DCore"],
     noarchive=False,
 )
+# Big files nothing here uses (27 MB of the zip): OpenCV's video codecs, Qt's software OpenGL (the
+# app is plain widgets), Pillow's AVIF codec, Qt's own translations.
+UNUSED = ("opencv_videoio_ffmpeg", "opengl32sw.dll", "_avif.", "/translations/")
+
+
+def used(entry) -> bool:
+    name = entry[0].replace("\\", "/").lower()
+    return not any(part in name for part in UNUSED)
+
+
+a.binaries = [entry for entry in a.binaries if used(entry)]
+a.datas = [entry for entry in a.datas if used(entry)]
 a.pure = [entry for entry in a.pure if entry[0].split(".")[0] not in OURS]
 pyz = PYZ(a.pure)
 exe = EXE(

@@ -351,6 +351,8 @@ party_room:
 # 12 Nov 2026: the old anchors sat on the 3D lobby behind the panel, and once that view shifted
 # the room read as play_menu_bottom (every Soul Furnace start failed). Now the panel itself:
 # Leave Party, and the "Private Party" line in the old and the new layout (one may miss).
+# 16 Nov 2026: the two "Private Party" lines pass at 0.62 (was 0.75; nothing else scores over
+# 0.31 there): on a PC that draws text 4% larger the right one scored 0.72.
 - source: native/party_room__2
   box:
   - 1262
@@ -366,7 +368,7 @@ party_room:
   - 330
   - 1060
   - 362
-  threshold: 0.75
+  threshold: 0.62
   seen_at_least: 1.0
   elsewhere_at_most: 0.252
 - source: native/party_room__1
@@ -375,7 +377,7 @@ party_room:
   - 282
   - 1060
   - 314
-  threshold: 0.75
+  threshold: 0.62
   seen_at_least: 1.0
   elsewhere_at_most: 0.303
 soul_furnace_picker:

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+
+- **Party room not recognised on some PCs** ("Select Stage didn't reach the party room; on unknown",
+  then Roblox restarting over and over): some screens draw the game's text a few percent larger.
+  A screen that matches nothing is now checked again at slightly larger and smaller text.
+- **Smaller download**: about 27 MB of unused files left out of xpedite.exe's folder.
+
 ## 1.1.0
 
 - **xpedite.exe**: a Windows download that needs no Python, and **updates itself** from the GitHub

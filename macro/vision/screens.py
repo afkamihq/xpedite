@@ -23,6 +23,13 @@ UNKNOWN = "unknown"
 BLACK = "black"
 BLACK_BELOW = 6  # mean brightness
 LOADING = {BLACK, "roblox_teleport", "game_loading"}  # normal during a trip, not lost
+# Some PCs draw the game's text a few percent larger or smaller in the same layout (16 Nov 2026:
+# a 3440-wide screen drew it 4% larger, and the party room, known only by its text, read as
+# unknown). A frame that matches nothing is looked at again with the anchors at these sizes.
+TEXT_SIZES = (1.04, 0.96)
+# ...and a resized anchor must pass by this much more: weak anchors on plain colour creep over
+# their mark when resized (the Checkpoint Shop read as challenge_detail at 0.71 and 0.73 over 0.7).
+RESIZED_MARGIN = 0.05
 
 
 def _game_size() -> tuple[int, int]:
@@ -103,6 +110,13 @@ class Anchor:
     x: int
     y: int
     threshold: float
+    resized: tuple = ()  # the template at each of TEXT_SIZES
+
+
+def _resized(patch: np.ndarray) -> tuple:
+    return tuple(cv2.resize(patch, None, fx=size, fy=size,
+                            interpolation=cv2.INTER_LINEAR if size > 1 else cv2.INTER_AREA)
+                 for size in TEXT_SIZES)
 
 
 @dataclass
@@ -148,12 +162,13 @@ class ScreenDetector:
                 if patch is None:  # not baked (a new anchor): cut it from its screenshot
                     source = sources.setdefault(a["source"], load_gray(a["source"]))
                     patch = source[y0:y1, x0:x1].copy()
-                built.append(Anchor(patch, x0, y0, a["threshold"]))
+                built.append(Anchor(patch, x0, y0, a["threshold"], _resized(patch)))
             if built:
                 self.anchors[name] = built
 
-    def score(self, gray: np.ndarray, name: str) -> float | None:
+    def score(self, gray: np.ndarray, name: str, any_text_size: bool = False) -> float | None:
         """The weakest passing anchor's match, or None if the screen isn't showing.
+        any_text_size also tries each anchor a little larger and smaller (TEXT_SIZES).
 
         A screen with three anchors may miss one: an anchor can sit on content that
         looked fixed in the sample pictures but isn't, such as today's challenge.
@@ -163,6 +178,9 @@ class ScreenDetector:
         weakest, misses = 1.0, 0
         for anchor in anchors:
             value = match_near(gray, anchor.template, anchor.x, anchor.y)
+            if any_text_size and value < anchor.threshold:
+                value = max(value, *(match_near(gray, t, anchor.x, anchor.y) - RESIZED_MARGIN
+                                     for t in anchor.resized))
             if value < anchor.threshold:
                 misses += 1
                 if misses > misses_allowed:
@@ -179,6 +197,11 @@ class ScreenDetector:
             value = self.score(gray, name)
             if value is not None:
                 return Detection(name, value, (time.perf_counter() - start) * 1000)
+        if gray[::8, ::8].mean() >= BLACK_BELOW:
+            for name in self.anchors:
+                value = self.score(gray, name, any_text_size=True)
+                if value is not None:
+                    return Detection(name, value, (time.perf_counter() - start) * 1000)
         # Nearly black, allowing for the small notices Roblox shows during a trip.
         name = BLACK if gray[::8, ::8].mean() < BLACK_BELOW else UNKNOWN
         return Detection(name, 0.0, (time.perf_counter() - start) * 1000)
