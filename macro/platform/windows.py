@@ -229,6 +229,24 @@ def _exe_of(pid: int) -> str:
     return name
 
 
+def _game_window_pids() -> set[int]:
+    """The Roblox processes showing a game-sized window (the tray helper has none)."""
+    pids = set()
+
+    def visit(hwnd, _):
+        pid = wintypes.DWORD()
+        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        if user32.IsWindowVisible(hwnd) and _exe_of(pid.value) == GAME_EXE:
+            rect = wintypes.RECT()
+            user32.GetWindowRect(hwnd, ctypes.byref(rect))
+            if rect.right - rect.left >= 200 and rect.bottom - rect.top >= 200:
+                pids.add(pid.value)
+        return True
+
+    user32.EnumWindows(_ENUMPROC(visit), 0)
+    return pids
+
+
 def client_rect(hwnd) -> tuple[int, int, int, int]:
     """Where a window's picture is on the screen: x, y, width, height."""
     rect, origin = wintypes.RECT(), wintypes.POINT(0, 0)
@@ -776,18 +794,28 @@ class WindowsPlatform(Platform):
         while the macro runs in its Remote Desktop account) can't be closed from here and isn't
         ours to count, and Roblox's tray helper ("--launch-to-tray", no window) isn't a game:
         on 12 Nov 2026, 23:39, the user's tray helper made every fresh start fail with
-        AccessDenied, 20 times, until the supervisor gave up."""
+        AccessDenied, 20 times, until the supervisor gave up.
+
+        But the tray helper becomes the game itself when Play is pressed (Roblox's tray mode,
+        "AppState/TrayMode" in its log), keeping that flag. On 17 Nov 2026 such a game counted as
+        not running, so Setup started Roblox again (the game left its server for the link) and
+        recovery then closed it. A flagged process with a game window is the game."""
         mine = _session_of(os.getpid())
         found = []
+        windowed = None
         for process in psutil.process_iter(["name"]):
             if (process.info["name"] or "").lower() != GAME_EXE or _session_of(process.pid) != mine:
                 continue
             if not include_tray:
                 try:
-                    if "--launch-to-tray" in process.cmdline():
-                        continue
+                    tray = "--launch-to-tray" in process.cmdline()
                 except (psutil.AccessDenied, psutil.NoSuchProcess):
                     continue
+                if tray:
+                    if windowed is None:
+                        windowed = _game_window_pids()
+                    if process.pid not in windowed:
+                        continue
             found.append(process)
         return found
 

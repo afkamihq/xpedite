@@ -34,6 +34,10 @@ WANTED = (
 RESULTS = (600, 253, 1560, 560)  # 1920x1080: where search results list, in two columns
 TOGGLE_X = (1035, 1516)          # each column's toggle, 1920x1080
 COLUMN_SPLIT = 1080              # a name left of this is in the left column
+# 1920x1080: the window's title, where the pointer rests while a toggle is read after a click. Under
+# the pointer a toggle is drawn darker (17 Nov 2026: green 91 instead of 124, red 91 instead of
+# 110), too dark to read, so every fix was reported as "didn't change" though it had.
+AWAY = (380, 200)
 
 
 @dataclass
@@ -76,6 +80,21 @@ def _find_row(frame, name: str):
     return round(TOGGLE_X[column] * SCALE), y + round(6 * SCALE / 0.75)
 
 
+def _read_after_click(p, toggle, timeout: float = 2.0) -> bool | None:
+    """The toggle's state once the pointer is off it and two looks agree, or None."""
+    p.hover(*(round(v * SCALE) for v in AWAY))
+    end = p.now() + timeout
+    last = None
+    while True:
+        p.sleep(0.2)
+        state = _toggle_state(p.grab(), toggle)
+        if state is not None and state == last:
+            return state
+        if p.now() >= end:
+            return state
+        last = state
+
+
 def search(nav: Navigator, words: str):
     p = nav.p
     p.click(*nav.detector.button("game_settings", "search"))
@@ -105,10 +124,10 @@ def check_and_fix(nav: Navigator, fix: bool = True, log=None, on_lost=None) -> l
             p.hover(*toggle)
             p.sleep(0.1)
             p.click(*toggle)
-            p.sleep(0.6)
-            now = _toggle_state(p.grab(), toggle)
+            now = _read_after_click(p, toggle)
             state.changed = now == wanted
-            log(f"setting {name!r}: {'on' if state.found else 'off'} -> {'on' if now else 'off'}"
+            log(f"setting {name!r}: {'on' if state.found else 'off'} -> "
+                + ("unreadable" if now is None else "on" if now else "off")
                 + ("" if state.changed else " (didn't change)"))
             state.found = now
         else:

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.3
+
+- **Roblox started from its tray was restarted or moved to another server:** Roblox's tray mode
+  keeps its start-up flag on the game itself, so the macro thought Roblox wasn't running, started it
+  again (the game left its server), then restarted it from the "Joining server" screen. A tray-started
+  Roblox with a game window now counts as running.
+- **Setup reported its game-setting fixes as "didn't change"** though they had: a switch is drawn
+  darker under the pointer, too dark to read. The pointer moves off it before the setting is read back.
+
 ## 1.1.2
 
 - **Setup stopped at the game's Settings on some PCs** ("lobby -> game_settings failed 3 times"):
