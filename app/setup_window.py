@@ -13,13 +13,14 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from theme import BAD, GOOD, WARN
-from ui import Card, NavButton, SettingRow, SubWindow, icon, label, rows, secret_field
+from ui import Card, NavButton, SettingRow, SubWindow, icon, label, number, rows, secret_field, show_row
 
 DONE_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "setup_done")
 ROLE_WORDS = {"dps": "Damage", "support": "Support", "farm": "Farm"}
 # Quick start's Expedition goals -> minimums on the route (rerolled until a route promises them).
-# Starting points from School Grounds difficulty 1 routes (15 Nov 2026: Cursed Timber 7-25, Fuel
-# Cells 1-16 a route); Tasks changes them per map and difficulty.
+# These are the boxes' starting amounts, which the player can change; from School Grounds
+# difficulty 1 routes (15 Nov 2026: Cursed Timber 7-25, Fuel Cells 1-16 a route). Tasks changes
+# them later, per map and difficulty.
 GOALS = {"Its material": {"material": 18}, "Fuel Cells": {"Fuel Cell": 8},
          "Both": {"material": 15, "Fuel Cell": 6}, "Just play": {}}
 
@@ -109,17 +110,53 @@ class SetupWindow(SubWindow):
         self.exp_map.addItems(expedition.MAPS)
         self.exp_difficulty = QComboBox()
         self.exp_difficulty.addItems(["1", "2", "3"])
+        self.exp_difficulty.setToolTip("Difficulty")
+        stage = QWidget()
+        stage_box = QHBoxLayout(stage)
+        stage_box.setContentsMargins(0, 0, 0, 0)
+        stage_box.setSpacing(6)
+        stage_box.addWidget(self.exp_map)
+        stage_box.addWidget(self.exp_difficulty)
         self.exp_goal = QComboBox()
         self.exp_goal.addItems(list(GOALS))
+        # The amounts a route must promise (user, 17 Nov 2026: the player picks them, not just the
+        # goal). Each box shows only when the goal wants it; Tasks keeps the same numbers per map.
+        self.exp_least = {"material": number(1, 9999, width=150), "Fuel Cell": number(1, 9999, width=110)}
+        self.exp_least["material"].setToolTip("Rerolls until a route promises at least this much of the map's material")
+        self.exp_least["Fuel Cell"].setSuffix(" Fuel Cells")
+        self.exp_least["Fuel Cell"].setToolTip("Rerolls until a route promises at least this many Fuel Cells")
+        least = QWidget()
+        least_box = QHBoxLayout(least)
+        least_box.setContentsMargins(0, 0, 0, 0)
+        least_box.setSpacing(6)
+        for box in self.exp_least.values():
+            least_box.addWidget(box)
+        self.exp_least_row = SettingRow("At least", least)
+        self.exp_map.currentTextChanged.connect(self._show_material)
+        self.exp_goal.currentTextChanged.connect(self._show_goal)
         add = QPushButton("Add an Expedition task")
         add.setObjectName("primary")
         add.clicked.connect(self.add_expedition)
         rows(card, SettingRow("Private server", server_box))
         card.add(self.server_note)
-        rows(card, SettingRow("Expedition", self.exp_map), SettingRow("Difficulty", self.exp_difficulty),
-             SettingRow("Reroll for", self.exp_goal))
+        rows(card, SettingRow("Expedition", stage), SettingRow("Reroll for", self.exp_goal), self.exp_least_row)
         card.add(add)
+        self._show_material(self.exp_map.currentText())
+        self._show_goal(self.exp_goal.currentText())
         return card
+
+    def _show_material(self, name: str):
+        from macro.modes import expedition
+        self.exp_least["material"].setSuffix(f" {expedition.MATERIAL.get(name, 'material')}")
+
+    def _show_goal(self, goal_name: str):
+        """The goal's starting amounts in the boxes it uses; the others hidden."""
+        goal = GOALS.get(goal_name, {})
+        for key, box in self.exp_least.items():
+            box.setVisible(key in goal)
+            if key in goal:
+                box.setValue(goal[key])
+        show_row(self.exp_least_row, bool(goal))
 
     def save_server(self):
         config = self.main.config
@@ -134,8 +171,8 @@ class SetupWindow(SubWindow):
         name = self.exp_map.currentText()
         difficulty = int(self.exp_difficulty.currentText())
         goal = GOALS[self.exp_goal.currentText()]
-        minimums = {(expedition.MATERIAL[name] if key == "material" else key): {"on": True, "min": least}
-                    for key, least in goal.items()}
+        minimums = {(expedition.MATERIAL[name] if key == "material" else key):
+                    {"on": True, "min": self.exp_least[key].value()} for key in goal}
         settings = expedition.load_settings()
         settings.setdefault("maps", {})[f"{name}|{difficulty}"] = {
             "reroll": bool(minimums), "match": "all", "minimums": minimums, "max_rerolls": 50,

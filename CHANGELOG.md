@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.2
+
+- **Setup stopped at the game's Settings on some PCs** ("lobby -> game_settings failed 3 times"):
+  the open Settings window wasn't recognised where the game spaces its small text differently, so
+  the gear was clicked again and closed it. It's now recognised by the window's frame and close button.
+- **Setup → Quick start: choose the amounts.** *At least* sets how much of the map's material and
+  how many Fuel Cells a route must promise before the Expedition is played (it rerolls until one does).
+  Expedition and difficulty share one row.
+
 ## 1.1.1
 
 - **Party room not recognised on some PCs** ("Select Stage didn't reach the party room; on unknown",

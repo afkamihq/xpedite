@@ -897,33 +897,37 @@ match:
   seen_at_least: 0.711
   elsewhere_at_most: 0.245
 game_settings:
+# 17 Nov 2026: the panel's frame, not its rows. Two anchors sat on row text, and a player's PC
+# that spaces small letters differently scored 0.77 there, so the open window read as the lobby
+# and Setup clicked the gear again (closing it). win/game_settings3 is that PC's picture. The
+# third mark, the red close button, was picked by hand: the found one took in the match below.
 - source: win/game_settings
   box:
   - 208
   - 624
   - 416
   - 664
-  threshold: 0.873
-  seen_at_least: 0.993
+  threshold: 0.872
+  seen_at_least: 0.992
   elsewhere_at_most: 0.039
 - source: win/game_settings
   box:
-  - 896
-  - 528
-  - 1104
-  - 568
-  threshold: 0.88
-  seen_at_least: 1.0
-  elsewhere_at_most: 0.043
+  - 224
+  - 576
+  - 432
+  - 616
+  threshold: 0.873
+  seen_at_least: 0.993
+  elsewhere_at_most: 0.075
 - source: win/game_settings
   box:
-  - 432
-  - 496
-  - 584
-  - 540
-  threshold: 0.88
-  seen_at_least: 1.0
-  elsewhere_at_most: 0.051
+  - 1164
+  - 130
+  - 1204
+  - 170
+  threshold: 0.874
+  seen_at_least: 0.994
+  elsewhere_at_most: 0.407
 lobby:
 - source: native/lobby__1
   box:

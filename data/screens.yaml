@@ -252,7 +252,7 @@ screens:
       autoplay_gear: [1728, 620]
   # The game's own Settings window (the gear in the top bar), over the lobby or a match.
   game_settings:
-    frames: [win/game_settings, win/game_settings2]
+    frames: [win/game_settings, win/game_settings2, win/game_settings3]
     buttons:
       close: [1579, 200]
       search: [1127, 209]
